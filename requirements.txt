@@ -8,3 +8,4 @@ sknw~=0.14
 Pillow~=8.1.0
 pandas~=1.2.1
 GraphRicciCurvature~=0.5.2.1
+setuptools~=53.0.0
