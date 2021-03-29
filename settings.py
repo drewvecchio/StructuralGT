@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import networkx as nx
 import os
 import re
+import csv
 import cv2
 import time
 import process_image
@@ -52,7 +53,7 @@ def norm_value(value, data_list):
     return norm_value
 
 def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, laplacian, \
-              scharr, sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, \
+              scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
               no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, Do_clust, \
               Do_ANC, Do_Ast, heatmap, Do_Ricci):
 
@@ -866,7 +867,35 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         pdf.savefig()
         plt.close()
 
-
+    if(Exp_EL == 1):
+        if(weighted == 1):
+            fields = ['Source', 'Target', 'Weight', 'Length']
+            el = nx.generate_edgelist(G, delimiter=',', data=["weight", "length"])
+            with open(file2, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=',')
+                writer.writerow(fields)
+                for line in el:
+                    line = str(line)
+                    row = line.split(',')
+                    try:
+                        writer.writerow(row)
+                    except:
+                        None
+            csvfile.close()
+        else:
+            fields = ['Source', 'Target']
+            el = nx.generate_edgelist(G, delimiter=',', data=False)
+            with open(file2, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=',')
+                writer.writerow(fields)
+                for line in el:
+                    line = str(line)
+                    row=line.split(',')
+                    try:
+                        writer.writerow(row)
+                    except:
+                        None
+            csvfile.close()
 
     # exporting as gephi file
     if(Do_gexf == 1):
@@ -899,9 +928,9 @@ def get_checks():
 
     # global variables for all of the check boxes
     global Gamma, md_filter, g_blur, autolvl, fg_color, laplacian, scharr, sobel, lowpass, Thresh_method, asize, \
-        bsize, wsize, thresh, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, no_self_loops, \
-        multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, Do_Ast, Do_WI, \
-        heatmap, Do_Ricci
+        bsize, wsize, thresh, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
+        no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, \
+        Do_Ast, Do_WI, heatmap, Do_Ricci
 
     # checkboxes for image detection settings
     thresh = var10.get()
@@ -977,6 +1006,7 @@ def get_checks():
     display_nodeID = var26.get()
     no_self_loops = var27.get()
     multigraph = var28.get()
+    Exp_EL = var20.get()
 
     # maximum size of objects to remove if removing disconnected segments
     r_size = removesize.get()
@@ -1036,9 +1066,9 @@ def get_checks():
 
     # returning all the values
     return Gamma, md_filter, g_blur, autolvl, fg_color, Thresh_method, asize, bsize, wsize, thresh, laplacian, scharr, \
-           sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, no_self_loops, \
-           multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, Do_Ast, \
-           Do_WI, heatmap, Do_Ricci
+           sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
+           no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, \
+           Do_dia, Do_Ast, Do_WI, heatmap, Do_Ricci
 
 
 def get_Settings(filename):
@@ -1165,9 +1195,9 @@ def Proceed_button():
 
     # save_data calls everything else and saves the results
     save_data(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, \
-              laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, \
-              no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, Do_clust, \
-              Do_ANC, Do_Ast, heatmap, Do_Ricci)
+              laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, \
+              display_nodeID, no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, \
+              Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
 
     progress(100)
     label_count.set("Done!")
@@ -1180,23 +1210,26 @@ def Proceed_button():
     print(elapse + " minutes")
     button1["state"] = "active"
     button3["state"] = "active"
+    button4['state'] = "active"
 
 
 def adjust_settings(root, source, saveloc, filename):
 
     # adjusting the settings for a new image
     root.destroy()
-    global src, file, file1, oldfilename
+    global src, file, file1, file2, oldfilename
     src = source
     filename = re.sub('.png', '', filename)
     filename = re.sub('.tif', '', filename)
     filename = re.sub('.jpg', '', filename)
     filename = re.sub('.jpeg', '', filename)
     gfile = filename + "_graph.gexf"
+    ELfile = filename + "_EL.csv"
     oldfilename = filename
     filename = filename + "_SGT_results.pdf"
-    file1 = os.path.join(saveloc, gfile)
     file = os.path.join(saveloc, filename)
+    file1 = os.path.join(saveloc, gfile)
+    file2 = os.path.join(saveloc, ELfile)
     label_count.set("Ready to Proceed")
 
 
@@ -1209,7 +1242,7 @@ def make_settings(root, source, saveloc, filename):
     settings.title("StructuralGT Settings")
 
     # file is the regular file, file1 is the gfile for gephi
-    global src, file, file1, oldfilename
+    global src, file, file1, file2, oldfilename
 
     src = source
 
@@ -1219,10 +1252,12 @@ def make_settings(root, source, saveloc, filename):
     filename = re.sub('.jpg', '', filename)
     filename = re.sub('.jpeg', '', filename)
     gfile = filename + "_graph.gexf"
+    ELfile = filename + "_EL.csv"
     oldfilename = filename
     filename = filename + "_SGT_results.pdf"
-    file1 = os.path.join(saveloc, gfile)
     file = os.path.join(saveloc, filename)
+    file1 = os.path.join(saveloc, gfile)
+    file2 = os.path.join(saveloc, ELfile)
 
     # setting the frames for the window
     frame1 = Frame(settings)
@@ -1247,9 +1282,9 @@ def make_settings(root, source, saveloc, filename):
     # this is for all the boolean check boxes
     # please note that its only some of the numbers from 11 to 39, not all of them
     # the the 10s place is the frame the variable is in
-    global  var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var21, var22, var23, var24, \
-        var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, var39, \
-        var40, var41
+    global  var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var20, var21, var22, var23, \
+        var24, var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, \
+        var39, var40, var41
 
     var10 = IntVar()
     var11 = IntVar()
@@ -1262,6 +1297,7 @@ def make_settings(root, source, saveloc, filename):
     var18 = IntVar()
     var19 = DoubleVar()
     var1f = IntVar()
+    var20 = IntVar()
     var21 = IntVar()
     var22 = IntVar()
     var23 = IntVar()
@@ -1293,6 +1329,7 @@ def make_settings(root, source, saveloc, filename):
     c17 = Checkbutton(frame1, text='Use Scharr Gradient', variable=var17, onvalue=1, offvalue=0)
     c18 = Checkbutton(frame1, text='Use Sobel Gradient', variable=var18, onvalue=1, offvalue=0)
     c1f = Checkbutton(frame1, text='Apply Low-pass Filter', variable=var1f, onvalue=1, offvalue=0)
+    c20 = Checkbutton(frame3, text='Export edge list', variable=var20, onvalue=1, offvalue=0)
     c21 = Checkbutton(frame3, text='Merge nearby nodes', variable=var21, onvalue=1, offvalue=0)
     c22 = Checkbutton(frame3, text='Prune dangling edges', variable=var22, onvalue=1, offvalue=0)
     c23 = Checkbutton(frame3, text='Remove disconnected segments', variable=var23, onvalue=1, offvalue=0)
@@ -1359,12 +1396,13 @@ def make_settings(root, source, saveloc, filename):
     s2.grid(row=1, column=0)
     c1f.grid(row=8, column=1)
 
+    c20.grid(row=0, column=1)
     c21.grid(row=0, column=0)
     c22.grid(row=1, column=0)
     c23.grid(row=4, column=0)
-    c24.grid(row=0, column=1)
-    c25.grid(row=1, column=1)
-    c26.grid(row=3, column=0)
+    c24.grid(row=1, column=1)
+    c25.grid(row=3, column=0)
+    c26.grid(row=3, column=1)
     c27.grid(row=2, column=0)
     c28.grid(row=2, column=1)
 

@@ -45,7 +45,7 @@ def norm_value(value, data_list):
     return norm_value
 
 def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, laplacian, \
-              scharr, sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, \
+              scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
               no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, Do_clust, \
               Do_ANC, Do_Ast, heatmap, Do_Ricci):
 
@@ -827,7 +827,35 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         pdf.savefig()
         plt.close()
 
-        label_count.set("Done")
+    if (Exp_EL == 1):
+        if (weighted == 1):
+            fields = ['Source', 'Target', 'Weight', 'Length']
+            el = nx.generate_edgelist(G, delimiter=',', data=["weight", "length"])
+            with open(file2, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=',')
+                writer.writerow(fields)
+                for line in el:
+                    line = str(line)
+                    row = line.split(',')
+                    try:
+                        writer.writerow(row)
+                    except:
+                        None
+            csvfile.close()
+        else:
+            fields = ['Source', 'Target']
+            el = nx.generate_edgelist(G, delimiter=',', data=False)
+            with open(file2, 'w', newline='') as csvfile:
+                writer = csv.writer(csvfile, delimiter=',')
+                writer.writerow(fields)
+                for line in el:
+                    line = str(line)
+                    row = line.split(',')
+                    try:
+                        writer.writerow(row)
+                    except:
+                        None
+            csvfile.close()
 
     # exporting as gephi file
     if(Do_gexf == 1):
@@ -853,13 +881,15 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 del G[s][e]['pts']
             nx.write_gexf(G, file1)
 
+    label_count.set("Done")
+
 def get_checks():
 
     # global variables for all of the check boxes
     global Gamma, md_filter, g_blur, autolvl, fg_color, laplacian, scharr, sobel, lowpass, Thresh_method, asize, \
-        bsize, wsize, thresh, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, no_self_loops, \
-        multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, Do_Ast, Do_WI, \
-        heatmap, Do_Ricci
+        bsize, wsize, thresh, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
+        no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, \
+        Do_Ast, Do_WI, heatmap, Do_Ricci
 
     # checkboxes for image detection settings
     thresh = var10.get()
@@ -927,6 +957,7 @@ def get_checks():
         blursize.insert('end', bsize)
 
     # checkboxes for graph extraction settings, which is mainly for skeleton image building
+    Exp_EL = var20.get()
     merge_nodes = var21.get()
     prune = var22.get()
     clean = var23.get()
@@ -961,11 +992,11 @@ def get_checks():
     try:
         wsize = int(wsize)
     except TypeError:
-        w_size = 10
+        wsize = 10
         windowsize.delete(0, END)
         windowsize.insert('end', wsize)
     if (wsize > 500):
-        w_size = 500
+        wsize = 500
         windowsize.delete(0, END)
         windowsize.insert('end', wsize)
     elif (wsize < 0):
@@ -994,9 +1025,9 @@ def get_checks():
 
     # returning all the values
     return Gamma, md_filter, g_blur, autolvl, fg_color, Thresh_method, asize, bsize, wsize, thresh, laplacian, scharr, \
-           sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, display_nodeID, no_self_loops, \
-           multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, Do_Ast, \
-           Do_WI, heatmap, Do_Ricci
+           sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
+           no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, \
+           Do_dia, Do_Ast, Do_WI, heatmap, Do_Ricci
 
 
 def start_csv():
@@ -1160,19 +1191,21 @@ def Proceed_button(sources, filenames, saveloc):
         filename = re.sub('.jpg', '', filename)
         filename = re.sub('.jpeg', '', filename)
         gfile = filename + "_graph.gexf"
+        ELfile = filename + "_EL.csv"
         get_Settings(filename)
         old_filename = filename
         filename = filename + "_SGT_results.pdf"
-        global file1, file
-        file1 = os.path.join(saveloc, gfile)
+        global file, file1, file2
         file = os.path.join(saveloc, filename)
+        file1 = os.path.join(saveloc, gfile)
+        file2 = os.path.join(saveloc, ELfile)
         progress(1)
         get_checks()
         progress(5)
 
         # save_data calls everything else and saves the results
         save_data(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, \
-                  laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Do_gexf, r_size, weighted, \
+                  laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, \
                   display_nodeID, no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, \
                   Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
 
@@ -1226,7 +1259,7 @@ def make_settings(root, sources, saveloc, filenames):
     settings.title("StructuralGT Multi-Image Settings")
 
     # file is the regular file, file1 is the gfile for gephi
-    global src, file, file1
+    global src, file, file1, file2
 
     # setting the frames for the window
     frame1 = Frame(settings)
@@ -1251,9 +1284,9 @@ def make_settings(root, sources, saveloc, filenames):
     # this is for all the boolean check boxes
     # please note that its only some of the numbers from 11 to 39, not all of them
     # the the 10s place is the frame the variable is in
-    global var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var21, var22, var23, var24, \
-        var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, var39, \
-        var40, var41
+    global var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var20, var21, var22, var23, \
+        var24, var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, \
+        var39, var40, var41
 
     var10 = IntVar()
     var11 = IntVar()
@@ -1266,6 +1299,7 @@ def make_settings(root, sources, saveloc, filenames):
     var18 = IntVar()
     var19 = DoubleVar()
     var1f = IntVar()
+    var20 = IntVar()
     var21 = IntVar()
     var22 = IntVar()
     var23 = IntVar()
@@ -1297,6 +1331,7 @@ def make_settings(root, sources, saveloc, filenames):
     c17 = Checkbutton(frame1, text='Use Scharr Gradient', variable=var17, onvalue=1, offvalue=0)
     c18 = Checkbutton(frame1, text='Use Sobel Gradient', variable=var18, onvalue=1, offvalue=0)
     c1f = Checkbutton(frame1, text='Apply Low-pass Filter', variable=var1f, onvalue=1, offvalue=0)
+    c20 = Checkbutton(frame3, text='Export edge list', variable=var20, onvalue=1, offvalue=0)
     c21 = Checkbutton(frame3, text='Merge nearby nodes', variable=var21, onvalue=1, offvalue=0)
     c22 = Checkbutton(frame3, text='Prune dangling edges', variable=var22, onvalue=1, offvalue=0)
     c23 = Checkbutton(frame3, text='Remove disconnected segments', variable=var23, onvalue=1, offvalue=0)
@@ -1362,12 +1397,13 @@ def make_settings(root, sources, saveloc, filenames):
     s2.grid(row=1, column=0)
     c1f.grid(row=8, column=1)
 
+    c20.grid(row=0, column=1)
     c21.grid(row=0, column=0)
     c22.grid(row=1, column=0)
     c23.grid(row=4, column=0)
-    c24.grid(row=0, column=1)
-    c25.grid(row=1, column=1)
-    c26.grid(row=3, column=0)
+    c24.grid(row=1, column=1)
+    c25.grid(row=3, column=0)
+    c26.grid(row=3, column=1)
     c27.grid(row=2, column=0)
     c28.grid(row=2, column=1)
 
