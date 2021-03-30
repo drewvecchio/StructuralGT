@@ -1,8 +1,24 @@
 """settings: Generates the graphical user interface for
 selecting the image detection, graph extraction, and
 GT parameter calculation settings on a selected image.
+
 Copyright (C) 2021, The Regents of the University of Michigan.
-Author:drewvecchio
+
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
+Contact email: vecdrew@umich.edu
 """
 
 from __main__ import *
@@ -528,7 +544,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
             plt.close()
 
         if heatmap:
-            sz = 50
+            sz = 30
             lw = 1.5
             update_label("Generating heat maps...")
             time.sleep(0.5)

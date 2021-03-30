@@ -1,8 +1,24 @@
 """multi_image_settings: Generates the graphical user interface for
 selecting the image detection, graph extraction, and
 GT parameter calculation settings for a multi-image analysis.
+
 Copyright (C) 2021, The Regents of the University of Michigan.
-Author:drewvecchio
+
+This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
+Contact email: vecdrew@umich.edu
 """
 
 from __main__ import *
@@ -483,22 +499,24 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
             plt.close()
 
         if heatmap:
+            sz = 30
+            lw = 1.5
             if(Do_kdist == 1):
                 f6a = plt.figure(figsize=(8.5, 8.5), dpi=400)
                 f6a.add_subplot(1, 1, 1)
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=klist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=klist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Degree Heatmap', fontdict=font1)
@@ -512,16 +530,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=w_klist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=w_klist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Weighted Degree Heatmap', fontdict=font1)
@@ -535,16 +553,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=Tlist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=Tlist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Clustering Coefficient Heatmap', fontdict=font1)
@@ -558,16 +576,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=BCdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=BCdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Betweenness Centrality Heatmap', fontdict=font1)
@@ -581,16 +599,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=w_BCdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=w_BCdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Width-Weighted Betweenness Centrality Heatmap', fontdict=font1)
@@ -604,16 +622,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=CCdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=CCdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Closeness Centrality Heatmap', fontdict=font1)
@@ -627,16 +645,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=w_CCdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=w_CCdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Length-Weighted Closeness Centrality Heatmap', fontdict=font1)
@@ -650,16 +668,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=ECdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=ECdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Eigenvector Centrality Heatmap', fontdict=font1)
@@ -673,16 +691,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.imshow(src, cmap='gray')
                 nodes = G.nodes()
                 gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c=w_ECdist, cmap='plasma')
+                plt.scatter(gn[:, 1], gn[:, 0], s=sz, c=w_ECdist, cmap='plasma')
                 if multigraph:
                     for (s, e) in G.edges():
                         for k in range(int(len(G[s][e]))):
                             ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                            plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 else:
                     for (s, e) in G.edges():
                         ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=1)
+                        plt.plot(ge[:, 1], ge[:, 0], 'black', linewidth=lw)
                 plt.xticks([])
                 plt.yticks([])
                 plt.title('Width-Weighted Eigenvector Centrality Heatmap', fontdict=font1)
