@@ -359,9 +359,12 @@ def run_weighted_GT_calcs(G, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, 
         wdata_dict["y"].append(Ecent)
 
     if (Do_Ricci == 1):
-
-        w_orc = OllivierRicci(G, weight='length', method="OTD")
-        w_orc.compute_ricci_curvature()
+        try:
+            w_orc = OllivierRicci(G, weight='length', method="OTD")
+            w_orc.compute_ricci_curvature()
+        except:
+            w_orc = OllivierRicci(G, weight='length', method="ATD")
+            w_orc.compute_ricci_curvature()
 
         w_frc = FormanRicci(G, weight='length')
         w_frc.compute_ricci_curvature()
