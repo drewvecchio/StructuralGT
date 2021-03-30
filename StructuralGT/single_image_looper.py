@@ -25,7 +25,7 @@ from __main__ import *
 from tkinter import *
 from tkinter import filedialog
 
-import settings
+from StructuralGT import settings
 import cv2
 import os
 from PIL import Image, ImageTk

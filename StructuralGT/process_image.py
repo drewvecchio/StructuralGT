@@ -22,8 +22,6 @@ Contact email: vecdrew@umich.edu
 """
 
 from __main__ import *
-from settings import *
-from multi_image_settings import *
 import cv2
 import numpy as np
 from skimage.morphology import disk

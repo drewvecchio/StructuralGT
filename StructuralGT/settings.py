@@ -1,6 +1,6 @@
-"""multi_image_settings: Generates the graphical user interface for
+"""settings: Generates the graphical user interface for
 selecting the image detection, graph extraction, and
-GT parameter calculation settings for a multi-image analysis.
+GT parameter calculation settings on a selected image.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
@@ -32,22 +32,28 @@ from PIL import Image, ImageTk
 import networkx as nx
 import os
 import re
+import csv
 import cv2
 import time
-import process_image
 import skel_ID
-import GT_Params_multi
-import GetWeights
+from StructuralGT import GetWeights, GT_Params, process_image
 import numpy as np
 import sknw
-import csv
 import datetime
+import single_image_looper
+
 
 
 def progress(currentValue):
+
     # setting the progressbar
-    progressbar["value"] = currentValue
+    progressbar["value"]=currentValue
     progressbar.update()  # Force an update of the GUI
+
+def update_label(label_text):
+    label_count.set(label_text)
+    settings.update()
+
 
 def norm_value(value, data_list):
     min_val = min(data_list)
@@ -65,16 +71,20 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
               no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, Do_clust, \
               Do_ANC, Do_Ast, heatmap, Do_Ricci):
 
+    # Updating the label alert
+    update_label("Processing image...")
 
     # processing the image itself to create a binary image img_bin and updating progress
     img, img_bin, ret = process_image.binarize(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, \
                                                laplacian, scharr, sobel, lowpass, asize, bsize, wsize, thresh)
     progress(10)
+    update_label("Extracting graph...")
 
     # making the skeleton image and updating progress
     newskel, skel_int, Bp_coord_x, Bp_coord_y, Ep_coord_x, Ep_coord_y = \
         skel_ID.make_skel(img_bin, merge_nodes, prune, clean, r_size)
     progress(25)
+    update_label("Formatting graph...")
 
     # skeleton analysis object with sknw
     if multigraph:
@@ -114,7 +124,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         for (s, e) in G.edges():
             if(weighted == 1):
                 ge = G[s][e]['pts']
-                pix_width, wt = GetWeights.assignweightsbywidth(ge,img_bin)
+                pix_width, wt = GetWeights.assignweightsbywidth(ge, img_bin)
                 G[s][e]['pixel width'] = pix_width
                 G[s][e]['weight'] = wt
             else:
@@ -134,26 +144,26 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                     G.remove_edge(s, e)
 
     progress(30)
-    global just_data
+
     # running GT calcs
-    just_data = []
-    data, just_data, klist, Tlist, BCdist, CCdist, ECdist, orc, orc_list, frc, frc_list= \
-        GT_Params_multi.run_GT_calcs(G, just_data, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, \
+    data, klist, Tlist, BCdist, CCdist, ECdist, orc, orc_list, frc, frc_list= \
+        GT_Params.run_GT_calcs(G, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, \
                                Do_clust, Do_ANC, Do_Ast, Do_WI, multigraph, Do_Ricci)
-    progress(80)
+    progress(85)
 
     # running weighted calcs if requested
     if(weighted == 1):
-        w_data, just_data, w_klist, w_BCdist, w_CCdist, w_ECdist, w_orc, w_orc_list, w_frc, w_frc_list= \
-            GT_Params_multi.run_weighted_GT_calcs(G, just_data, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, \
-                                                  Do_Ast, Do_WI, Do_Ricci, multigraph)
-    progress(85)
+        w_data, w_klist, w_BCdist, w_CCdist, w_ECdist, w_orc, w_orc_list, w_frc, w_frc_list= \
+            GT_Params.run_weighted_GT_calcs(G, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, Do_Ast, Do_WI, \
+                                            Do_Ricci, multigraph)
+    progress(90)
     # original, filtered, and binary image, with histogram
     raw_img = src
     img_filt = img
     img_bin = img_bin
     histo = cv2.calcHist([img_filt], [0], None, [256], [0, 256])
 
+    update_label("Generating PDF results...")
     # exporting to pdf
     with PdfPages(file) as pdf:
         font1 = {'fontsize': 12}
@@ -191,7 +201,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         pdf.savefig()
         plt.close()
 
-        progress(90)
+
 
         # plotting skeletal images
         f2 = plt.figure(figsize=(8.5, 11), dpi=400)
@@ -242,7 +252,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
             f3.patch.set_visible(False)
             plt.axis('off')
             colw = [2 / 3, 1 / 3]
-            table = plt.table(cellText=data.values[:, 0:], loc='upper center', colWidths=colw, cellLoc='left')
+            table = plt.table(cellText=data.values[:, :], loc='upper center', colWidths=colw, cellLoc='left')
             table.scale(1, 1.5)
             plt.title("Unweighted GT parameters")
             try:
@@ -260,8 +270,11 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
             f3.patch.set_visible(False)
             plt.axis('off')
             colw = [2 / 3, 1 / 3]
+            # try:
             table = plt.table(cellText=data.values[:, :], loc='center', colWidths=colw, cellLoc='left')
             table.scale(1, 1.5)
+            # except:
+            #     table = plt.table(cellText=[["Number of Nodes","Number of Edges"],["Value",]])
             plt.title("Unweighted GT Parameters")
             if Do_kdist:
                 f3.add_subplot(2, 2, 2)
@@ -442,6 +455,36 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 sy2 = 1
                 fnt = font1
             index = 1
+            #f5.add_subplot(sy2, 2, index)
+            #weight_data = []
+            #if multigraph:
+                #for (s, e) in G.edges():
+                    #for k in range(int(len(G[s][e]))):
+                        #weight_data.append(G[s][e][k]['weight'])
+                    #try:
+                        #bins7 = np.linspace(min(weight_data), max(weight_data), 50)
+                    #except:
+                        # this only happens if there are no edges I hope
+                        #bins7 = np.linspace(0, 1, 50)
+            #else:
+                #for (s, e) in G.edges():
+                    #weight_data.append(G[s][e]['weight'])
+                #try:
+                    #bins7 = np.linspace(min(weight_data), max(weight_data), 50)
+                #except:
+                    # this only happens if there are no edges I hope
+                    #bins7 = np.linspace(0, 1, 50)
+            #try:
+                #wt_sig = str(round(stdev(weight_data),3))
+            #except:
+                #wt_sig = "N/A"
+            #wt_txt = "Edge weight Dist.: $\sigma$=" + wt_sig
+            #plt.hist(weight_data, bins=bins7)
+            #plt.title(wt_txt, fontdict=fnt)
+            #plt.xlabel("Line Weight", fontdict=fnt)
+            #plt.xticks(fontsize=8)
+            #plt.ylabel("Counts", fontdict=fnt)
+            #index += 1
             if Do_kdist:
                 f5.add_subplot(sy2, 2, index)
                 bins4 = np.arange(0.5, max(w_klist) + 1.5, 1)
@@ -501,6 +544,8 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         if heatmap:
             sz = 30
             lw = 1.5
+            update_label("Generating heat maps...")
+            time.sleep(0.5)
             if(Do_kdist == 1):
                 f6a = plt.figure(figsize=(8.5, 8.5), dpi=400)
                 f6a.add_subplot(1, 1, 1)
@@ -709,8 +754,9 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 pdf.savefig()
                 plt.close()
 
-
         if Do_Ricci:
+            update_label("Graphing Ricci Curvature...")
+            time.sleep(0.5)
             Plasma = cm.get_cmap('plasma')
 
 
@@ -835,18 +881,8 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         pdf.savefig()
         plt.close()
 
-
-
-        f8 = plt.figure(figsize=(8.5, 8.5), dpi=300)
-        f8.add_subplot(1, 1, 1)
-        plt.text(0.5, 0.5, run_info, horizontalalignment='center', verticalalignment='center')
-        plt.xticks([])
-        plt.yticks([])
-        pdf.savefig()
-        plt.close()
-
-    if (Exp_EL == 1):
-        if (weighted == 1):
+    if(Exp_EL == 1):
+        if(weighted == 1):
             fields = ['Source', 'Target', 'Weight', 'Length']
             el = nx.generate_edgelist(G, delimiter=',', data=["weight", "length"])
             with open(file2, 'w', newline='') as csvfile:
@@ -868,7 +904,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 writer.writerow(fields)
                 for line in el:
                     line = str(line)
-                    row = line.split(',')
+                    row=line.split(',')
                     try:
                         writer.writerow(row)
                     except:
@@ -899,7 +935,8 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 del G[s][e]['pts']
             nx.write_gexf(G, file1)
 
-    label_count.set("Done")
+    update_label("Done")
+
 
 def get_checks():
 
@@ -975,7 +1012,6 @@ def get_checks():
         blursize.insert('end', bsize)
 
     # checkboxes for graph extraction settings, which is mainly for skeleton image building
-    Exp_EL = var20.get()
     merge_nodes = var21.get()
     prune = var22.get()
     clean = var23.get()
@@ -984,6 +1020,7 @@ def get_checks():
     display_nodeID = var26.get()
     no_self_loops = var27.get()
     multigraph = var28.get()
+    Exp_EL = var20.get()
 
     # maximum size of objects to remove if removing disconnected segments
     r_size = removesize.get()
@@ -1013,11 +1050,11 @@ def get_checks():
         wsize = 10
         windowsize.delete(0, END)
         windowsize.insert('end', wsize)
-    if (wsize > 500):
+    if(wsize > 500):
         wsize = 500
         windowsize.delete(0, END)
         windowsize.insert('end', wsize)
-    elif (wsize < 0):
+    elif(wsize<0):
         wsize = 2
         windowsize.delete(0, END)
         windowsize.insert('end', wsize)
@@ -1048,91 +1085,12 @@ def get_checks():
            Do_dia, Do_Ast, Do_WI, heatmap, Do_Ricci
 
 
-def start_csv():
-
-    # Setting the a variable for the first row of the csv file with all the categories
-    weighted = var25.get()
-    Do_ANC = var31.get()
-    Do_GD = var32.get()
-    Do_Eff = var33.get()
-    Do_clust = var37.get()
-    Do_kdist = var34.get()
-    Do_BCdist = var35.get()
-    Do_CCdist = var36.get()
-    Do_ECdist = var30.get()
-    Do_dia = var38.get()
-    Do_Ast = var39.get()
-    Do_WI = var40.get()
-    multigraph = var28.get()
-    Do_Ricci = var41.get()
-    leftcol = ['']
-    leftcol.append('Number of Nodes')
-    leftcol.append('Number of Edges')
-
-    if multigraph:
-        Do_BCdsit = 0
-        Do_ECdist = 0
-        Do_clust = 0
-
-    if Do_kdist == 1:
-        leftcol.append('Average Degree')
-    if Do_dia == 1:
-        leftcol.append('Network Diameter')
-    if Do_GD == 1:
-        leftcol.append('Graph Density')
-    if Do_Eff == 1:
-        leftcol.append('Global Efficiency')
-    if Do_WI == 1:
-        leftcol.append('Wiener Index')
-    if Do_clust == 1:
-        leftcol.append('Average Clustering Coefficient')
-    if Do_ANC == 1:
-        leftcol.append('Average Nodal Connectivity')
-    if Do_Ast == 1:
-        leftcol.append('Assortativity Coefficient')
-    if Do_BCdist == 1:
-        leftcol.append('Average Betweenness Centrality')
-    if Do_CCdist == 1:
-        leftcol.append('Average Closeness Centrality')
-    if Do_ECdist == 1:
-        leftcol.append('Average Eigenvector Centrality')
-    if Do_Ricci == 1:
-        leftcol.append('Average Ollivier-Ricci Curvature')
-        leftcol.append('Average Forman-Ricci Curvature')
-
-    if weighted == 1:
-
-        if multigraph:
-            Do_BCdist = 0
-            Do_ECdist = 0
-            Do_ANC = 0
-
-        if Do_kdist == 1:
-            leftcol.append('Weighted Average Degree')
-        if Do_WI == 1:
-            leftcol.append('Length-Weighted Wiener Index')
-        if Do_ANC == 1:
-            leftcol.append('Max flow between periphery')
-        if Do_Ast == 1:
-            leftcol.append('Weighted Assortativity Coefficient')
-        if Do_BCdist == 1:
-            leftcol.append('Width-Weighted Average Betweenness Centrality')
-        if Do_CCdist == 1:
-            leftcol.append('Length-Weighted Average Closeness Centrality')
-        if Do_ECdist == 1:
-            leftcol.append('Width-Weighted Average Eigenvector Centrality')
-        if Do_Ricci == 1:
-            leftcol.append('Average Weighted Ollivier-Ricci Curvature')
-            leftcol.append('Average Weighted Forman-Ricci Curvature')
-
-    return leftcol
-
 def get_Settings(filename):
 
     # similar to the start of the csv file, this is just getting all the relevant settings to display in the pdf
     global run_info
     run_info = "Run Info\n"
-    run_info = run_info + filename
+    run_info = run_info + oldfilename
     now = datetime.datetime.now()
     run_info = run_info + " || " + now.strftime("%Y-%m-%d %H:%M:%S") + "\n"
     if Thresh_method == 0:
@@ -1173,111 +1131,147 @@ def get_Settings(filename):
 
     return run_info
 
-def Proceed_button(sources, filenames, saveloc):
+
+def Preview_button():
+
+    # run get_checks() to get all the entered information
+    # this function only actually needs image detection settings
+    get_checks()
+
+    # calling process_image.py to process the actual image
+    img, img_bin, ret = process_image.binarize(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, \
+                                               laplacian, scharr, sobel, lowpass, asize, bsize, wsize, thresh)
+
+    # getting the raw image from src and the new filtered image and the binary image (img_bin)
+    raw_img = src
+    img_filt = img
+    img_bin = img_bin
+
+    # making a histogram of the grayscale values of all the pixels in the filtered image
+    histo = cv2.calcHist([img_filt], [0], None, [256], [0,256])
+    # making a plot with the matlab plotting module
+    f = plt.figure(figsize=(4, 4), dpi=200)
+
+    # 2x2 plot, top left section is original grayscale resized image
+    f.add_subplot(2, 2, 1)
+    plt.imshow(raw_img, cmap='gray')
+    plt.xticks([])
+    plt.yticks([])
+    plt.title("Original Image", fontsize= 10)
+
+    # top right plot is the processed image
+    # the processed image is affected by the four checkboxes in the image detection settings
+    # use the preview button to ensure the image has the starkest contrast possible
+    f.add_subplot(2, 2, 2)
+    plt.imshow(img_filt, cmap='gray')
+    plt.xticks([])
+    plt.yticks([])
+    plt.title("Processed Image", fontsize= 10)
+
+    # bottom left is histogram of the processed image
+    f.add_subplot(2, 2, 3)
+    plt.plot(histo, color='blue')
+    if(Thresh_method == 0):
+        Th = np.array([[thresh, thresh],[0,max(histo)]], dtype='object')
+        plt.plot(Th[0],Th[1], ls='--', color='black')
+    elif(Thresh_method == 2):
+        Th = np.array([[ret, ret], [0, max(histo)]], dtype='object')
+        plt.plot(Th[0], Th[1], ls='--', color='black')
+    plt.yticks([])
+    plt.title("Histogram of Processed Image", fontsize= 10)
+    plt.xlabel("Pixel values")
+    plt.ylabel("Counts")
+
+    # bottom right is the binary image
+    f.add_subplot(2, 2, 4)
+    plt.imshow(img_bin, cmap='gray')
+    plt.xticks([])
+    plt.yticks([])
+    plt.title("Binary Image", fontsize= 10)
+
+    # showing the plots
+    plt.show(block=True)
+
+
+def Proceed_button():
+
     # starting the image analysis, first by finding the values of all the check boxes
     # also getting the start time for the actual time intensive part of the program
     print("Running...")
-    button2["state"]= "disabled"
+    button1["state"] = "disabled"
+    button3["state"] = "disabled"
     button4["state"] = "disabled"
     start = time.time()
-    cols = len(filenames) + 4
-    leftcol = start_csv()
-    rows = len(leftcol)
-    global compiled_data
-    compiled_data = [[0 for i in range(cols)] for j in range(rows)]
-    i = 0
-    x = 0
+    progress(1)
+    get_checks()
+    get_Settings(oldfilename)
+    progress(5)
 
-    # beginning the actual csv
-    for info in leftcol:
-        compiled_data[x][0] = info
-        compiled_data[x][len(filenames) + 1] = ''
-        x += 1
-    compiled_data[0][len(filenames) + 2] = 'Average'
-    compiled_data[0][len(filenames) + 3] = 'Standard Deviation'
+    # save_data calls everything else and saves the results
+    save_data(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, \
+              laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, \
+              display_nodeID, no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, \
+              Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
 
-    # looping through all the images
-    global filename_index
-    global just_data
-    while (i < len(filenames)):
-        filename = filenames[i]
-        filename_index = i + 1
-        src = sources[i]
-        # making the new filenames
-        filename = re.sub('.png', '', filename)
-        filename = re.sub('.tif', '', filename)
-        filename = re.sub('.jpg', '', filename)
-        filename = re.sub('.jpeg', '', filename)
-        gfile = filename + "_graph.gexf"
-        ELfile = filename + "_EL.csv"
-        get_Settings(filename)
-        old_filename = filename
-        filename = filename + "_SGT_results.pdf"
-        global file, file1, file2
-        file = os.path.join(saveloc, filename)
-        file1 = os.path.join(saveloc, gfile)
-        file2 = os.path.join(saveloc, ELfile)
-        progress(1)
-        get_checks()
-        progress(5)
+    progress(100)
+    label_count.set("Done!")
+    print("Done")
 
-        # save_data calls everything else and saves the results
-        save_data(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, \
-                  laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, \
-                  display_nodeID, no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, \
-                  Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
-
-        j = 1
-        compiled_data[0][filename_index] = old_filename
-        for data_point in just_data:
-            compiled_data[j][filename_index] = data_point
-            j += 1
-
-        progress(100)
-
-        # updating the images completed
-        print("Results generated for " + filename)
-        i += 1
-        label_count.set(f'Images Completed: {i}/{len(filenames)}')
-
-    # combining all the data from each image into the csv
-    x = 1
-    while x < len(compiled_data):
-        try:
-            average = sum([num for num in compiled_data[x][1:len(filenames) + 1] if isinstance(num, (int, float))]) / len(
-                [num for num in compiled_data[x][1:len(filenames) + 1] if isinstance(num, (int, float))])
-            compiled_data[x][len(filenames) + 2] = str(round(average, 5))
-            std = np.std([num for num in compiled_data[x][1:len(filenames) + 1] if isinstance(num, (int, float))], ddof=1)
-            compiled_data[x][len(filenames) + 3] = str(round(std, 5))
-        except:
-            compiled_data[x][len(filenames) + 2] = 'NaN'
-            compiled_data[x][len(filenames) + 3] = 'NaN'
-        x += 1
-
-    # filling in the final csv
-    csvfile = os.path.join(saveloc, 'Compiled_Data.csv')
-    with open(csvfile, 'w') as csvfile:
-        outfile = csv.writer(csvfile)
-        for row in compiled_data:
-            outfile.writerow(row)
-
-    # printing out the time to complete the run
+    # displaying the time it took to run the image analysis in minutes
     end = time.time()
     elapse1 = (end - start) / 60
     elapse = str("%.2f" % elapse1)
     print(elapse + " minutes")
-    settings.destroy()
+    button1["state"] = "active"
+    button3["state"] = "active"
+    button4['state'] = "active"
 
 
-def make_settings(root, sources, saveloc, filenames):
+def adjust_settings(root, source, saveloc, filename):
+
+    # adjusting the settings for a new image
+    root.destroy()
+    global src, file, file1, file2, oldfilename
+    src = source
+    filename = re.sub('.png', '', filename)
+    filename = re.sub('.tif', '', filename)
+    filename = re.sub('.jpg', '', filename)
+    filename = re.sub('.jpeg', '', filename)
+    gfile = filename + "_graph.gexf"
+    ELfile = filename + "_EL.csv"
+    oldfilename = filename
+    filename = filename + "_SGT_results.pdf"
+    file = os.path.join(saveloc, filename)
+    file1 = os.path.join(saveloc, gfile)
+    file2 = os.path.join(saveloc, ELfile)
+    label_count.set("Ready to Proceed")
+
+
+def make_settings(root, source, saveloc, filename):
+
     # close previous window, open a new one
     root.destroy()
     global settings
     settings = Tk()
-    settings.title("StructuralGT Multi-Image Settings")
+    settings.title("StructuralGT Settings")
 
     # file is the regular file, file1 is the gfile for gephi
-    global src, file, file1, file2
+    global src, file, file1, file2, oldfilename
+
+    src = source
+
+    # making the new filenames
+    filename = re.sub('.png', '', filename)
+    filename = re.sub('.tif', '', filename)
+    filename = re.sub('.jpg', '', filename)
+    filename = re.sub('.jpeg', '', filename)
+    gfile = filename + "_graph.gexf"
+    ELfile = filename + "_EL.csv"
+    oldfilename = filename
+    filename = filename + "_SGT_results.pdf"
+    file = os.path.join(saveloc, filename)
+    file1 = os.path.join(saveloc, gfile)
+    file2 = os.path.join(saveloc, ELfile)
 
     # setting the frames for the window
     frame1 = Frame(settings)
@@ -1302,7 +1296,7 @@ def make_settings(root, sources, saveloc, filenames):
     # this is for all the boolean check boxes
     # please note that its only some of the numbers from 11 to 39, not all of them
     # the the 10s place is the frame the variable is in
-    global var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var20, var21, var22, var23, \
+    global  var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var20, var21, var22, var23, \
         var24, var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, \
         var39, var40, var41
 
@@ -1386,6 +1380,7 @@ def make_settings(root, sources, saveloc, filenames):
     s2 = Scale(frame1, label='Global threshold value', variable=var10, from_=1, to=255, length=300, orient=HORIZONTAL)
     s2.set(127)
 
+
     # global variables for the only integer values that the user can enter
     global adaptsize, blursize, windowsize, threshval, removesize
 
@@ -1448,30 +1443,33 @@ def make_settings(root, sources, saveloc, filenames):
     removelabel.grid(row=5, column=0)
     removesize.grid(row=5, column=1)
 
-    # since there is no preview option the button variable was deleted so there is no button1
-    # since batch file analysis, no new image button3
-    # proceed does full data analysis and graph extraction
-    # select all checks all boxes in NetworkX Settings
-    global button2, button4
-    button2 = Button(frame4, text="Proceed", command=lambda: Proceed_button(sources, filenames, saveloc))
-    button4 = Button(frame4, text='Select All...', command=lambda:select_all())
-    button2.grid(row=8, column=2)
-    button4.grid(row=0,column=0)
-
-    global label_count
-    label_count = StringVar()
-    label_count.set(f'Images Completed: 0/{len(filenames)}')
-    label_counter = Label(frame4, textvariable=label_count)
-    label_counter.grid(row=10, column=2)
-
     def select_all():
         cbox_list = [c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41]
         for i in cbox_list:
             i.select()
 
+    # preview and proceed buttons call their respective functions
+    # preview just runs image detection
+    # proceed does full data analysis and graph extraction
+    global button1, button2, button3, button4
+    button1 = Button(frame1, text="Advanced Preview...", command=Preview_button)
+    button2 = Button(frame4, text="Proceed", command=Proceed_button)
+    button3 = Button(frame4, text="New Image", command=lambda: single_image_looper.make_gui())
+    button4 = Button(frame4, text='Select All...', command=lambda:select_all())
+
+    button1.grid(row=9, column=1)
+    button2.grid(row=8, column=2)
+    button3.grid(row=10, column=2)
+    button4.grid(row=0,column=0)
+
+    global label_count
+    label_count = StringVar()
+    label_count.set("Ready to Proceed")
+    label_counter = Label(frame4, textvariable=label_count)
+    label_counter.grid(row=9, column=0)
+
     get_checks()
-    src1 = sources[0]
-    img, img_bin, ret = process_image.binarize(src1, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, \
+    img, img_bin, ret = process_image.binarize(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, \
                                                laplacian, scharr, sobel, lowpass, asize, bsize, wsize, thresh)
     img1 = Image.fromarray(img_bin)
     img2 = ImageTk.PhotoImage(image=img1)
@@ -1480,7 +1478,7 @@ def make_settings(root, sources, saveloc, filenames):
 
     def update(e):
         get_checks()
-        img, img_bin, ret = process_image.binarize(src1, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, \
+        img, img_bin, ret = process_image.binarize(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, \
                                                    laplacian, scharr, sobel, lowpass, asize, bsize, wsize, thresh)
         img1 = Image.fromarray(img_bin)
         img2 = ImageTk.PhotoImage(image=img1)
@@ -1493,10 +1491,11 @@ def make_settings(root, sources, saveloc, filenames):
     # a convenient progressbar, not indicative of the actual relative time left for the program to finish
     progressbar= Progressbar(frame4,orient="horizontal",length=300,mode="determinate")
     progressbar.grid(row=10, column=0)
-    maxValue = 100
-    currentValue = 0
-    progressbar["value"] = currentValue
-    progressbar["maximum"] = maxValue
+    maxValue=100
+    currentValue=0
+    progressbar["value"]=currentValue
+    progressbar["maximum"]=maxValue
 
     # keeping the window alive
     settings.mainloop()
+
