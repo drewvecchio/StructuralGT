@@ -1,7 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-descr = """StructuralGT: An automated python package for graph theory analysis of structural networks.
-Designed for processing digital micrographs of complex network materials.
+descr = """StructuralGT: An automated python package for graph theory analysis of structural networks.\n
+Designed for processing digital micrographs of complex network materials.\n
 For example, analyzing SEM images of polymer network.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
@@ -19,14 +19,14 @@ This program is free software: you can redistribute it and/or modify
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
+Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov\n
 Contact email: vecdrew@umich.edu
 """
 
 setup(
     name='StructuralGT',
-    version='1.0.1a',
-    packages=[''],
+    version='1.0.1a0',
+    packages=find_packages(),
     url='https://github.com/drewvecchio/StructuralGT',
     license='GNU General Public License v3',
     author='drewvecchio',
