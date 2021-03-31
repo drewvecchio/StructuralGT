@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 descr = """StructuralGT: An automated python package for graph theory analysis of structural networks.\n
 Designed for processing digital micrographs of complex network materials.\n
-For example, analyzing SEM images of polymer network.
+For example, analyzing SEM images of polymer network.\n
+See the README for detail information.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
