@@ -238,6 +238,8 @@ def newimwindow():
     # global A for image storage
     global A
 
+    im_err = "ValueError: image has wrong mode.  Try to reformat image as 8-bit."
+
     # getting the image location and opening it
     im_file = fileentry.get("1.0", END)
     path, filename = os.path.split(im_file)
@@ -250,7 +252,10 @@ def newimwindow():
         scalefactor = 512 / h1
     else:
         scalefactor = 512 / w1
-    PIL_image = PIL_image.resize(size=(int(w1 * scalefactor), int(h1 * scalefactor)))
+    try:
+        PIL_image = PIL_image.resize(size=(int(w1 * scalefactor), int(h1 * scalefactor)))
+    except:
+        tkinter.messagebox.showinfo('Image Error', im_err)
 
     # creating the global image object
     A = ImageTk.PhotoImage(image=PIL_image)
