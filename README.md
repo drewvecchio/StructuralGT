@@ -18,6 +18,8 @@ Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
 Contact email: vecdrew@umich.edu
 URL: https://github.com/drewvecchio/StructuralGT
 
+![](Images/SGT_BC_ex.png?raw=true)
+
 ### Structural Graph Theory Calculator
 
 StructuralGT is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
@@ -83,6 +85,8 @@ need to be appropriately cropped with an external program in advance.
 After selecting the image and clicking to proceed, the GUI will change to the StructuralGT Settings window.
 The GUI is segmented into four quadrants, for choosing the image detection settings, for previewing the binary image, 
 handling the generated graph object, and calculating the GT parameters using NetworkX algorithms.
+
+![](Images/GUI_ex.png?raw=true)
 
 ### Image Detection Settings
 

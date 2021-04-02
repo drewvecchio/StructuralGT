@@ -22,6 +22,8 @@ This program is free software: you can redistribute it and/or modify
 
 Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov\n
 Contact email: vecdrew@umich.edu
+
+![](Images/SGT_BC_ex.png?raw=true)
 """
 
 setup(
