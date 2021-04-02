@@ -1034,8 +1034,8 @@ def get_checks():
         r_size = 100
         removesize.delete(0, END)
         removesize.insert('end', r_size)
-    if(r_size > 5000):
-        r_size = 5000
+    if(r_size > 50000):
+        r_size = 50000
         removesize.delete(0, END)
         removesize.insert('end', r_size)
     elif(r_size<0):
