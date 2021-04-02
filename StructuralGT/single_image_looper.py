@@ -321,12 +321,12 @@ def make_gui():
     entry_y2 = Entry(frame4)
 
     # all of the buttons and calling their respective function calls
-    button0 = Button(frame3, text="Proceed with crop", bg="Green", command=Confirm_button_ex)
+    #button0 = Button(frame3, text="Proceed with crop", bg="Green", command=Confirm_button_ex)
     button1 = Button(frame3, text="Proceed without crop", fg="Black", command=Confirm_nocrop_button_ex)
     button2 = Button(frame3, text="Exit", bg="Red", command=frame3.quit)
     button3 = Button(frame2, text="Select file...", bg="gray", command=getfile)
     button4 = Button(frame2, text="Choose Save Location...", bg="gray", command=choosesave)
-    button5 = Button(frame2, text="Crop Image", bg="gray", command=newimwindow)
+    #button5 = Button(frame2, text="Crop Image", bg="gray", command=newimwindow)
 
     # setting the location of all elements in the gui
     label1.grid(row=0, column=1)
@@ -344,12 +344,12 @@ def make_gui():
     fileentry.grid(row=1, column=1)
     savedir.grid(row=2, column=1)
 
-    button0.grid(row=0, column=0)
+    #button0.grid(row=0, column=0)
     button1.grid(row=0, column=1)
     button2.grid(row=0, column=2)
     button3.grid(row=0, column=0)
     button4.grid(row=0, column=1)
-    button5.grid(row=0, column=2)
+    #button5.grid(row=0, column=2)
 
     # keep the window alive
     root.mainloop()
