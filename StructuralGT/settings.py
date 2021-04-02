@@ -1214,7 +1214,7 @@ def Proceed_button():
               Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
 
     progress(100)
-    label_count.set("Done!")
+    update_label("Done!")
     print("Done")
 
     # displaying the time it took to run the image analysis in minutes
@@ -1244,7 +1244,7 @@ def adjust_settings(root, source, saveloc, filename):
     file = os.path.join(saveloc, filename)
     file1 = os.path.join(saveloc, gfile)
     file2 = os.path.join(saveloc, ELfile)
-    label_count.set("Ready to Proceed")
+    update_label("Ready to Proceed")
 
 
 def make_settings(root, source, saveloc, filename):
