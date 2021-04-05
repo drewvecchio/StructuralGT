@@ -18,7 +18,7 @@ Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
 Contact email: vecdrew@umich.edu
 URL: https://github.com/drewvecchio/StructuralGT
 
-![](Images/SGT_BC_ex.png?raw=true)
+![](Images/ORC_ex.png?raw=true)
 
 ### Structural Graph Theory Calculator
 
