@@ -39,7 +39,7 @@ It is available as a downloadable python package:
 https://github.com/drewvecchio/StructuralGT/tree/StructuralGT_RC
 
 Or it can be pip installed from pypi.org using pip commands:
-pip install StructuralGT_RC
+pip install StructuralGT-RC
 
 For the version without the NetworKit/GraphRicciCurvature dependency, see the master branch of StructuralGT, or the 
 Windows executable file.
