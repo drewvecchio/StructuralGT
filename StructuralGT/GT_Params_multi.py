@@ -35,12 +35,10 @@ from networkx.algorithms import degree_assortativity_coefficient
 from networkx.algorithms.flow import maximum_flow
 from networkx.algorithms.distance_measures import diameter, periphery
 from networkx.algorithms.wiener import wiener_index
-from GraphRicciCurvature.OllivierRicci import OllivierRicci
-from GraphRicciCurvature.FormanRicci import FormanRicci
 
 
 def run_GT_calcs(G, just_data, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, \
-                               Do_clust, Do_ANC, Do_Ast, Do_WI, multigraph, Do_Ricci):
+                               Do_clust, Do_ANC, Do_Ast, Do_WI, multigraph):
 
     # getting nodes and edges and defining variables for later use
     klist = [0]
@@ -48,10 +46,6 @@ def run_GT_calcs(G, just_data, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist
     BCdist = [0]
     CCdist = [0]
     ECdist = [0]
-    orc = {}
-    frc = {}
-    orc_list = []
-    frc_list = []
     if multigraph:
         Do_BCdist = 0
         Do_ECdist = 0
@@ -216,49 +210,18 @@ def run_GT_calcs(G, just_data, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist
             data_dict["x"].append("Average eigenvector centrality")
             data_dict["y"].append(Ecent)
 
-        if (Do_Ricci == 1):
-
-            orc = OllivierRicci(G, weight=None, method="OTD")
-            orc.compute_ricci_curvature()
-
-            frc = FormanRicci(G, weight=None)
-            frc.compute_ricci_curvature()
-
-            if multigraph:
-                for (s, e) in G.edges():
-                    for k in range(int(len(G[s][e]))):
-                        orc_list.append(orc.G[s][e][k]["ricciCurvature"])
-                        frc_list.append(frc.G[s][e][k]["ricciCurvature"])
-            else:
-                for (s, e) in G.edges():
-                    orc_list.append(orc.G[s][e]["ricciCurvature"])
-                    frc_list.append(frc.G[s][e]["formanCurvature"])
-
-            av_orc = round(mean(orc_list), 5)
-            av_frc = round(mean(frc_list), 2)
-            data_dict["x"].append("Average Ollivier-Ricci Curvature")
-            data_dict["y"].append(av_orc)
-            just_data.append(av_orc)
-            data_dict["x"].append("Average Forman-Ricci Curvature")
-            data_dict["y"].append(av_frc)
-            just_data.append(av_frc)
 
     data = pd.DataFrame(data_dict)
 
-    return data, just_data, klist, Tlist, BCdist, CCdist, ECdist, orc, orc_list, frc, frc_list
+    return data, just_data, klist, Tlist, BCdist, CCdist, ECdist
 
-def run_weighted_GT_calcs(G, just_data, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, Do_Ast, Do_WI, Do_Ricci, \
-                          multigraph):
+def run_weighted_GT_calcs(G, just_data, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, Do_Ast, Do_WI, multigraph):
 
     # includes weight in the calculations
     klist = [0]
     BCdist = [0]
     CCdist = [0]
     ECdist = [0]
-    w_orc = {}
-    w_frc = {}
-    w_orc_list = []
-    w_frc_list = []
     if multigraph:
         Do_BCdist = 0
         Do_ECdist = 0
@@ -354,35 +317,9 @@ def run_weighted_GT_calcs(G, just_data, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdis
         Ecent = round(Ecent, 5)
         just_data.append(Ecent)
         wdata_dict["x"].append("Width-weighted average eigenvector centrality")
-        wdata_dict["y"].append(k)
+        wdata_dict["y"].append(Ecent)
 
-    if (Do_Ricci == 1):
-
-        w_orc = OllivierRicci(G, weight='length', method="OTD")
-        w_orc.compute_ricci_curvature()
-
-        w_frc = FormanRicci(G, weight='length')
-        w_frc.compute_ricci_curvature()
-
-        if multigraph:
-            for (s, e) in G.edges():
-                for k in range(int(len(G[s][e]))):
-                    w_orc_list.append(w_orc.G[s][e][k]["ricciCurvature"])
-                    w_frc_list.append(w_frc.G[s][e][k]["ricciCurvature"])
-        else:
-            for (s, e) in G.edges():
-                w_orc_list.append(w_orc.G[s][e]["ricciCurvature"])
-                w_frc_list.append(w_frc.G[s][e]["formanCurvature"])
-
-        av_w_orc = round(mean(w_orc_list), 5)
-        av_w_frc = round(mean(w_frc_list), 2)
-        wdata_dict["x"].append("Average Weighted Ollivier-Ricci Curvature")
-        wdata_dict["y"].append(av_w_orc)
-        just_data.append(av_w_orc)
-        wdata_dict["x"].append("Average Weighted Forman-Ricci Curvature")
-        wdata_dict["y"].append(av_w_frc)
-        just_data.append(av_w_frc)
 
     wdata = pd.DataFrame(wdata_dict)
 
-    return wdata, just_data, klist, BCdist, CCdist, ECdist, w_orc, w_orc_list, w_frc, w_frc_list
+    return wdata, just_data, klist, BCdist, CCdist, ECdist

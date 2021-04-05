@@ -12,7 +12,7 @@ and the location where a fiber branches, or 2 or more fibers intersect are taken
 operates with a graphical user interface (GUI) so that selecting images and processing the graphs are intuitive and 
 accessible to anyone, regardless of programming experience.  Detection of networks from input images, the extraction of 
 the graph object, and the subsequent GT analysis of the graph is handled entirely from the GUI, and a PDF file with the
-results of the analysis is saved.
+results of the analysis is saved.  Also see StructuralGT_RC for added Ricci Curvature analysis.
 
 \nSee the README for detail information.\n
 https://github.com/drewvecchio/StructuralGT'
@@ -39,7 +39,7 @@ Contact email: vecdrew@umich.edu
 
 setup(
     name='StructuralGT',
-    version='1.0.1a1',
+    version='1.0.1a2',
     packages=find_packages(),
     url='https://github.com/drewvecchio/StructuralGT',
     license='GNU General Public License v3',
@@ -57,6 +57,5 @@ setup(
         'sknw',
         'Pillow',
         'pandas',
-        'GraphRicciCurvature'
     ],
 )

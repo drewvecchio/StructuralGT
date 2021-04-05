@@ -232,6 +232,7 @@ positive (A is the adjacency matrix of the graph).  A measure of centrality wher
 on the centrality of the nodes connected to it.
 Reported as: average value, histogram, heat-map, and width-weighted counterparts
 
+**Ricci Curvature measurement only supported in separate branch, StructuralGT_RC**
 *Graph Ricci Curvature: The Ollivier-Ricci curvature and Forman-Ricci curvature can be evaluated using the python
 package, GraphRicciCurvature.  The ricci curvature is a method of community segmentation through differential geometry
 measures. Ricci curvature values are assigned to edges, with positive ricci curvature indicating connection to that 

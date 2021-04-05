@@ -62,7 +62,7 @@ def norm_value(value, data_list):
 def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, laplacian, \
               scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
               no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, Do_clust, \
-              Do_ANC, Do_Ast, heatmap, Do_Ricci):
+              Do_ANC, Do_Ast, heatmap):
 
 
     # processing the image itself to create a binary image img_bin and updating progress
@@ -136,16 +136,16 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
     global just_data
     # running GT calcs
     just_data = []
-    data, just_data, klist, Tlist, BCdist, CCdist, ECdist, orc, orc_list, frc, frc_list= \
+    data, just_data, klist, Tlist, BCdist, CCdist, ECdist= \
         GT_Params_multi.run_GT_calcs(G, just_data, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, Do_Eff, \
-                                     Do_clust, Do_ANC, Do_Ast, Do_WI, multigraph, Do_Ricci)
+                                     Do_clust, Do_ANC, Do_Ast, Do_WI, multigraph)
     progress(80)
 
     # running weighted calcs if requested
     if(weighted == 1):
-        w_data, just_data, w_klist, w_BCdist, w_CCdist, w_ECdist, w_orc, w_orc_list, w_frc, w_frc_list= \
+        w_data, just_data, w_klist, w_BCdist, w_CCdist, w_ECdist= \
             GT_Params_multi.run_weighted_GT_calcs(G, just_data, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_ANC, \
-                                                  Do_Ast, Do_WI, Do_Ricci, multigraph)
+                                                  Do_Ast, Do_WI, multigraph)
     progress(85)
     # original, filtered, and binary image, with histogram
     raw_img = src
@@ -709,123 +709,6 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
                 plt.close()
 
 
-        if Do_Ricci:
-            Plasma = cm.get_cmap('plasma')
-
-
-            f7a = plt.figure(figsize=(8.5, 8.5), dpi=400)
-            f7a.add_subplot(1, 1, 1)
-            plt.imshow(src, cmap='gray')
-            nodes = G.nodes()
-            gn = np.array([nodes[i]['o'] for i in nodes])
-            plt.scatter(gn[:, 1], gn[:, 0], s=20, c='black')
-            if multigraph:
-                for (s, e) in G.edges():
-                    for k in range(int(len(G[s][e]))):
-                        ge = G[s][e][k]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(orc.G[s][e][k]["ricciCurvature"], orc_list)), \
-                                 linewidth=2)
-            else:
-                for (s, e) in G.edges():
-                    ge = G[s][e]['pts']
-                    plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(orc.G[s][e]["ricciCurvature"], orc_list)), \
-                             linewidth=2)
-            plt.xticks([])
-            plt.yticks([])
-            plt.title('Ollivier-Ricci Curvature', fontdict=font1)
-            cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=min(orc_list), \
-                                                                                   vmax=max(orc_list)), cmap='plasma'))
-            #cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap='plasma'))
-            cbar.set_label('Value')
-            pdf.savefig()
-            plt.close()
-
-            if(weighted ==1):
-                f7b = plt.figure(figsize=(8.5, 8.5), dpi=400)
-                f7b.add_subplot(1, 1, 1)
-                plt.imshow(src, cmap='gray')
-                nodes = G.nodes()
-                gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c='black')
-                if multigraph:
-                    for (s, e) in G.edges():
-                        for k in range(int(len(G[s][e]))):
-                            ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0],
-                                     c=Plasma(norm_value(w_orc.G[s][e][k]["ricciCurvature"], w_orc_list)), \
-                                     linewidth=2)
-                else:
-                    for (s, e) in G.edges():
-                        ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(w_orc.G[s][e]["ricciCurvature"], w_orc_list)), \
-                                 linewidth=2)
-                plt.xticks([])
-                plt.yticks([])
-                plt.title('Weighted Ollivier-Ricci Curvature', fontdict=font1)
-                cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=min(w_orc_list), \
-                                                                            vmax=max(w_orc_list)), cmap='plasma'))
-                # cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap='plasma'))
-                cbar.set_label('Value')
-                pdf.savefig()
-                plt.close()
-
-            f7c = plt.figure(figsize=(8.5, 8.5), dpi=400)
-            f7c.add_subplot(1, 1, 1)
-            plt.imshow(src, cmap='gray')
-            nodes = G.nodes()
-            gn = np.array([nodes[i]['o'] for i in nodes])
-            plt.scatter(gn[:, 1], gn[:, 0], s=20, c='black')
-            if multigraph:
-                for (s, e) in G.edges():
-                    for k in range(int(len(G[s][e]))):
-                        ge = G[s][e][k]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(frc.G[s][e][k]["formanCurvature"], frc_list)), \
-                                 linewidth=2)
-            else:
-                for (s, e) in G.edges():
-                    ge = G[s][e]['pts']
-                    plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(frc.G[s][e]["formanCurvature"], frc_list)), \
-                             linewidth=2)
-            plt.xticks([])
-            plt.yticks([])
-            plt.title('Forman-Ricci Curvature', fontdict=font1)
-            cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=min(frc_list), \
-                                                                                   vmax=max(frc_list)), cmap='plasma'))
-            #cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap='plasma'))
-            cbar.set_label('Value')
-            pdf.savefig()
-            plt.close()
-
-            if(weighted == 1):
-                f7d = plt.figure(figsize=(8.5, 8.5), dpi=400)
-                f7d.add_subplot(1, 1, 1)
-                plt.imshow(src, cmap='gray')
-                nodes = G.nodes()
-                gn = np.array([nodes[i]['o'] for i in nodes])
-                plt.scatter(gn[:, 1], gn[:, 0], s=20, c='black')
-                if multigraph:
-                    for (s, e) in G.edges():
-                        for k in range(int(len(G[s][e]))):
-                            ge = G[s][e][k]['pts']
-                            plt.plot(ge[:, 1], ge[:, 0],
-                                     c=Plasma(norm_value(w_frc.G[s][e][k]["formanCurvature"], w_frc_list)), \
-                                     linewidth=2)
-                else:
-                    for (s, e) in G.edges():
-                        ge = G[s][e]['pts']
-                        plt.plot(ge[:, 1], ge[:, 0], c=Plasma(norm_value(w_frc.G[s][e]["formanCurvature"], w_frc_list)), \
-                                 linewidth=2)
-                plt.xticks([])
-                plt.yticks([])
-                plt.title('Weighted Forman-Ricci Curvature', fontdict=font1)
-                cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=min(w_frc_list), \
-                                                                            vmax=max(w_frc_list)), cmap='plasma'))
-                # cbar = plt.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-1, vmax=1), cmap='plasma'))
-                cbar.set_label('Value')
-                pdf.savefig()
-                plt.close()
-
-
         f8 = plt.figure(figsize=(8.5, 8.5), dpi=300)
         f8.add_subplot(1, 1, 1)
         plt.text(0.5, 0.5, run_info, horizontalalignment='center', verticalalignment='center')
@@ -906,7 +789,7 @@ def get_checks():
     global Gamma, md_filter, g_blur, autolvl, fg_color, laplacian, scharr, sobel, lowpass, Thresh_method, asize, \
         bsize, wsize, thresh, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
         no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, Do_dia, \
-        Do_Ast, Do_WI, heatmap, Do_Ricci
+        Do_Ast, Do_WI, heatmap
 
     # checkboxes for image detection settings
     thresh = var10.get()
@@ -1034,17 +917,12 @@ def get_checks():
     Do_Ast = var39.get()
     Do_WI = var40.get()
     heatmap = var29.get()
-    Do_Ricci = var41.get()
-
-    if(Do_Ricci == 1):
-        no_self_loops = 1
-        multigraph = 0
 
     # returning all the values
     return Gamma, md_filter, g_blur, autolvl, fg_color, Thresh_method, asize, bsize, wsize, thresh, laplacian, scharr, \
            sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, display_nodeID, \
            no_self_loops, multigraph, Do_clust, Do_ANC, Do_GD, Do_Eff, Do_kdist, Do_BCdist, Do_CCdist, Do_ECdist, \
-           Do_dia, Do_Ast, Do_WI, heatmap, Do_Ricci
+           Do_dia, Do_Ast, Do_WI, heatmap
 
 
 def start_csv():
@@ -1063,7 +941,6 @@ def start_csv():
     Do_Ast = var39.get()
     Do_WI = var40.get()
     multigraph = var28.get()
-    Do_Ricci = var41.get()
     leftcol = ['']
     leftcol.append('Number of Nodes')
     leftcol.append('Number of Edges')
@@ -1095,9 +972,6 @@ def start_csv():
         leftcol.append('Average Closeness Centrality')
     if Do_ECdist == 1:
         leftcol.append('Average Eigenvector Centrality')
-    if Do_Ricci == 1:
-        leftcol.append('Average Ollivier-Ricci Curvature')
-        leftcol.append('Average Forman-Ricci Curvature')
 
     if weighted == 1:
 
@@ -1120,9 +994,6 @@ def start_csv():
             leftcol.append('Length-Weighted Average Closeness Centrality')
         if Do_ECdist == 1:
             leftcol.append('Width-Weighted Average Eigenvector Centrality')
-        if Do_Ricci == 1:
-            leftcol.append('Average Weighted Ollivier-Ricci Curvature')
-            leftcol.append('Average Weighted Forman-Ricci Curvature')
 
     return leftcol
 
@@ -1224,7 +1095,7 @@ def Proceed_button(sources, filenames, saveloc):
         save_data(src, Thresh_method, Gamma, md_filter, g_blur, autolvl, fg_color, asize, bsize, wsize, thresh, \
                   laplacian, scharr, sobel, lowpass, merge_nodes, prune, clean, Exp_EL, Do_gexf, r_size, weighted, \
                   display_nodeID, no_self_loops, multigraph, Do_kdist, Do_dia, Do_BCdist, Do_CCdist, Do_ECdist, Do_GD, \
-                  Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap, Do_Ricci)
+                  Do_Eff, Do_clust, Do_ANC, Do_Ast, heatmap)
 
         j = 1
         compiled_data[0][filename_index] = old_filename
@@ -1303,7 +1174,7 @@ def make_settings(root, sources, saveloc, filenames):
     # the the 10s place is the frame the variable is in
     global var10, var11, var12, var13, var14, var15, var16, var17, var18, var19, var1f, var20, var21, var22, var23, \
         var24, var25, var26, var27, var28, var29, var30, var31, var32, var33, var34, var35, var36, var37, var38, \
-        var39, var40, var41
+        var39, var40
 
     var10 = IntVar()
     var11 = IntVar()
@@ -1337,7 +1208,6 @@ def make_settings(root, sources, saveloc, filenames):
     var38 = IntVar()
     var39 = IntVar()
     var40 = IntVar()
-    var41 = IntVar()
 
     # all the checkboxes and their corresponding variables when clicked
     c11 = Checkbutton(frame1, text='Apply median filter', variable=var11, onvalue=1, offvalue=0)
@@ -1369,7 +1239,6 @@ def make_settings(root, sources, saveloc, filenames):
     c38 = Checkbutton(frame4, text='Calculate network diameter', variable=var38, onvalue=1, offvalue=0)
     c39 = Checkbutton(frame4, text='Calculate assortativity coefficient', variable=var39, onvalue=1, offvalue=0)
     c29 = Checkbutton(frame4, text='Display Heat Maps', variable=var29, onvalue=1, offvalue=0)
-    c41 = Checkbutton(frame4, text='Map Ricci Curvature', variable=var41, onvalue=1, offvalue=0)
 
     # radio button for the type of image detection since you can only run one at once
     R1 = Radiobutton(frame1, text='Global Threshold', variable = var15, value=0)
@@ -1435,7 +1304,6 @@ def make_settings(root, sources, saveloc, filenames):
     c38.grid(row=6, column=0)
     c39.grid(row=6, column=2)
     c29.grid(row=1, column=0)
-    c41.grid(row=1, column=2)
     c40.grid(row=7, column=0)
 
     adaptlabel.grid(row=3, column=0)
@@ -1464,7 +1332,7 @@ def make_settings(root, sources, saveloc, filenames):
     label_counter.grid(row=10, column=2)
 
     def select_all():
-        cbox_list = [c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40, c41]
+        cbox_list = [c29, c30, c31, c32, c33, c34, c35, c36, c37, c38, c39, c40]
         for i in cbox_list:
             i.select()
 
