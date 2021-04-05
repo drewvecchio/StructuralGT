@@ -24,7 +24,7 @@ URL: https://github.com/drewvecchio/StructuralGT
 
 StructuralGT is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
 structural networks of a wide variety of material systems. This application converts digital images of 
-nano-/micro-/macro-scale structures into a graph theoretical (GT) representation of the structure in the image 
+nano-/micro-/macro-scale structures into a GT representation of the structure in the image 
 consisting of nodes and the edges that connect them. Fibers (or fiber-like structures) are taken to represent edges, 
 and the location where a fiber branches, or 2 or more fibers intersect are taken to represent nodes. The program 
 operates with a graphical user interface (GUI) so that selecting images and processing the graphs are intuitive and 
@@ -34,17 +34,18 @@ results of the analysis is saved.
 
 ### Getting Started
 
-StructuralGT is available as a downloadable python package or Windows executable from:
-https://github.com/drewvecchio/StructuralGT
+StructuralGT_RC is the same as StructuralGT, but with additional capability utilizing the GraphRicciCurvature module.\n
+It is available as a downloadable python package:
+https://github.com/drewvecchio/StructuralGT/tree/StructuralGT_RC
 
 Or it can be pip installed from pypi.org using pip commands:
 pip install StructuralGT_RC
 
-The windows executable can be run by double-clicking the icon on supported Windows operating systems (this may take
-up to a minute to load, so do not be alarmed).
+For the version without the NetworKit/GraphRicciCurvature dependency, see the master branch of StructuralGT, or the 
+Windows executable file.
 
 Otherwise,
-In the command line, open the StructuralGT GUI by running 'python StructuralGT'
+In the command line, open the StructuralGT GUI by running 'python StructuralGT_RC'
 
 ### Selecting analysis mode
 

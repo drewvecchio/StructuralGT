@@ -17,7 +17,7 @@ subsequent GT analysis of the graph is handled entirely from the GUI, and a PDF 
 is saved.
 
 \nSee the README for detail information.\n
-https://github.com/drewvecchio/StructuralGT
+https://github.com/drewvecchio/StructuralGT/tree/StructuralGT_RC
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
@@ -41,7 +41,7 @@ Contact email: vecdrew@umich.edu
 
 setup(
     name='StructuralGT_RC',
-    version='1.0.1a1',
+    version='1.0.1a2',
     packages=find_packages(),
     url='https://github.com/drewvecchio/StructuralGT',
     license='GNU General Public License v3',
