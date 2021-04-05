@@ -1,5 +1,5 @@
 """single_image_looper: Allows for repeated use of the
-StructuralGT single image analysis while remembering the
+StructuralGT_RC single image analysis while remembering the
 settings from the previous analysis.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
@@ -277,7 +277,7 @@ def make_gui():
     # Making a window and declaring a few variables
     global root
     root = Tk()
-    root.title("StructuralGT GUI")
+    root.title("StructuralGT_RC GUI")
 
     A = None
     src = []

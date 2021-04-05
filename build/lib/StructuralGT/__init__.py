@@ -1,5 +1,5 @@
 """
-StructuralGT
+StructuralGT_RC
 
 A python package for automated graph theory analysis
 of digital structural network images.

@@ -1,4 +1,4 @@
-"""StructuralGT: A python package for automated graph theory analysis of structural networks.
+"""StructuralGT_RC: A python package for automated graph theory analysis of structural networks.
 Designed for processing digital micrographs of complex network materials.
 For example, analyzing SEM images of polymer network.
 
@@ -24,15 +24,15 @@ Contact email: vecdrew@umich.edu
 from tkinter import *
 import tkinter.messagebox
 
-from StructuralGT import gui_multi_image, gui_single_image
+from StructuralGT_RC import gui_multi_image, gui_single_image
 
 window = Tk()
-window.title("StructuralGT Image Entry Selection")
+window.title("StructuralGT_RC Image Entry Selection")
 
 # All this really does is let you choose single or multi image options
 
 def about_window():
-    about_info = "StructuralGT: Automated graph theory analysis of network materials. " \
+    about_info = "StructuralGT_RC: Automated graph theory analysis of network materials. " \
                  "Performs image detection and graph theory calculation on digital images of networks." \
                  "\nCopyright (C) 2021, The Regents of the University of Michigan" \
                  "\n\n" \
@@ -49,7 +49,7 @@ def about_window():
                  "You should have received a copy of the GNU General Public License " \
                  "along with this program.  If not, see <https://www.gnu.org/licenses/>."
 
-    tkinter.messagebox.showinfo('About StructuralGT', about_info)
+    tkinter.messagebox.showinfo('About StructuralGT_RC', about_info)
 
 def multi_image():
 
@@ -84,8 +84,8 @@ frame_2 = Frame(window)
 frame_1.pack()
 frame_2.pack()
 
-button1 = Button(frame_2, text="Single Image StructuralGT", bg="Green", command=lambda: gui_single_image.make_gui(window))
-button2 = Button(frame_2, text="Multi-Image StructuralGT", bg="Light Blue", command=multi_image)
+button1 = Button(frame_2, text="Single Image StructuralGT_RC", bg="Green", command=lambda: gui_single_image.make_gui(window))
+button2 = Button(frame_2, text="Multi-Image StructuralGT_RC", bg="Light Blue", command=multi_image)
 button_about = Button(frame_2, text="About...", command=about_window)
 label1 = Label(frame_1, text="Please select an Image entry method")
 

@@ -36,7 +36,7 @@ import cv2
 import time
 import process_image
 import skel_ID
-from StructuralGT import GetWeights, GT_Params_multi
+from StructuralGT_RC import GetWeights, GT_Params_multi
 import numpy as np
 import sknw
 import csv
@@ -1273,7 +1273,7 @@ def make_settings(root, sources, saveloc, filenames):
     root.destroy()
     global settings
     settings = Tk()
-    settings.title("StructuralGT Multi-Image Settings")
+    settings.title("StructuralGT_RC Multi-Image Settings")
 
     # file is the regular file, file1 is the gfile for gephi
     global src, file, file1, file2

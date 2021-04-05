@@ -113,7 +113,7 @@ def make_gui(window, multi):
     # Making a window and declaring a few variables
     global root
     root = Tk()
-    root.title("StructuralGT GUI")
+    root.title("StructuralGT_RC GUI")
 
     A = None
     src = []

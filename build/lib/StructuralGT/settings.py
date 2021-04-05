@@ -36,7 +36,7 @@ import csv
 import cv2
 import time
 import skel_ID
-from StructuralGT import GetWeights, GT_Params, process_image
+from StructuralGT_RC import GetWeights, GT_Params, process_image
 import numpy as np
 import sknw
 import datetime
@@ -1253,7 +1253,7 @@ def make_settings(root, source, saveloc, filename):
     root.destroy()
     global settings
     settings = Tk()
-    settings.title("StructuralGT Settings")
+    settings.title("StructuralGT_RC Settings")
 
     # file is the regular file, file1 is the gfile for gephi
     global src, file, file1, file2, oldfilename

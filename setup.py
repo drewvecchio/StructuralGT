@@ -1,21 +1,23 @@
 from setuptools import setup, find_packages
 
-descr = """StructuralGT: An automated python package for graph theory analysis of structural networks.\n
+descr = """StructuralGT_RC: An automated python package for graph theory analysis of structural networks.\n
 Designed for processing digital micrographs of complex network materials.\n
 For example, analyzing SEM images of polymer network.\n
 
-StructuralGT is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
-structural networks of a wide variety of material systems. This application converts digital images of 
-nano-/micro-/macro-scale structures into a graph theoretical (GT) representation of the structure in the image 
-consisting of nodes and the edges that connect them. Fibers (or fiber-like structures) are taken to represent edges, 
-and the location where a fiber branches, or 2 or more fibers intersect are taken to represent nodes. The program 
-operates with a graphical user interface (GUI) so that selecting images and processing the graphs are intuitive and 
-accessible to anyone, regardless of programming experience.  Detection of networks from input images, the extraction of 
-the graph object, and the subsequent GT analysis of the graph is handled entirely from the GUI, and a PDF file with the
-results of the analysis is saved.
+StructuralGT_RC is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
+structural networks of a wide variety of material systems. This is the same software as StructuralGT, except with the 
+added functionality to perform Ricci Curvature calculation.  The two versions are separated due to issues with some 
+systems installing the dependency NetworKit. This application converts digital images of nano-/micro-/macro-scale 
+structures into a graph theoretical representation of the structure in the image consisting of nodes and the edges 
+that connect them. Fibers (or fiber-like structures) are taken to represent edges, and the location where a fiber 
+branches, or 2 or more fibers intersect are taken to represent nodes. The program operates with a graphical user 
+interface (GUI) so that selecting images and processing the graphs are intuitive and accessible to anyone, regardless 
+of programming experience.  Detection of networks from input images, the extraction of the graph object, and the 
+subsequent GT analysis of the graph is handled entirely from the GUI, and a PDF file with the results of the analysis 
+is saved.
 
 \nSee the README for detail information.\n
-https://github.com/drewvecchio/StructuralGT'
+https://github.com/drewvecchio/StructuralGT
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
@@ -38,7 +40,7 @@ Contact email: vecdrew@umich.edu
 """
 
 setup(
-    name='StructuralGT',
+    name='StructuralGT_RC',
     version='1.0.1a1',
     packages=find_packages(),
     url='https://github.com/drewvecchio/StructuralGT',

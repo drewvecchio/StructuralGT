@@ -1,5 +1,6 @@
-"""gui_single_image: Generates the graphical user interface for
-performing graph theory analysis on an image images.
+"""single_image_looper: Allows for repeated use of the
+StructuralGT_RC single image analysis while remembering the
+settings from the previous analysis.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
@@ -19,8 +20,6 @@ This program is free software: you can redistribute it and/or modify
 Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
 Contact email: vecdrew@umich.edu
 """
-
-
 from __main__ import *
 
 from tkinter import *
@@ -32,7 +31,9 @@ import os
 from PIL import Image, ImageTk
 
 
-
+# This is almost identical to the regular single image selector, same UI
+# Instead of calling make_settings from settings.py, it calls adjust_settings so the window is saved
+# This makes running multiple images with similar settings but not as a batch much easier
 
 def callback_click(event):
 
@@ -122,7 +123,7 @@ def getfile():
     afile = filedialog.askopenfilename()
 
     # testing if file is a workable image
-    if afile.endswith(('.tif', '.png', '.jpg', '.jpeg')):
+    if afile.endswith(('.tif', '.png', '.jpg')):
 
         #removing the previous canvas image
         list = root.slaves()
@@ -201,7 +202,7 @@ def Confirm_button_ex():
 
     # sending the cropped image
     src, saveloc, filename = Confirm_button()
-    settings.make_settings(root, src, saveloc, filename)
+    settings.adjust_settings(root, src, saveloc, filename)
 
 
 def Confirm_nocrop_button():
@@ -230,15 +231,13 @@ def Confirm_nocrop_button_ex():
 
     # send to settings.py without cropping the image
     src, saveloc, filename = Confirm_nocrop_button()
-    settings.make_settings(root, src, saveloc, filename)
+    settings.adjust_settings(root, src, saveloc, filename)
 
 
 def newimwindow():
 
     # global A for image storage
     global A
-
-    im_err = "ValueError: image has wrong mode.  Try to reformat image as 8-bit."
 
     # getting the image location and opening it
     im_file = fileentry.get("1.0", END)
@@ -252,10 +251,7 @@ def newimwindow():
         scalefactor = 512 / h1
     else:
         scalefactor = 512 / w1
-    try:
-        PIL_image = PIL_image.resize(size=(int(w1 * scalefactor), int(h1 * scalefactor)))
-    except:
-        tkinter.messagebox.showinfo('Image Error', im_err)
+    PIL_image = PIL_image.resize(size=(int(w1 * scalefactor), int(h1 * scalefactor)))
 
     # creating the global image object
     A = ImageTk.PhotoImage(image=PIL_image)
@@ -276,13 +272,12 @@ def newimwindow():
     button6.grid(row=2, column=1)
 
 
-def make_gui(window):
-    window.destroy()
+def make_gui():
 
     # Making a window and declaring a few variables
     global root
     root = Tk()
-    root.title("StructuralGT GUI")
+    root.title("StructuralGT_RC GUI")
 
     A = None
     src = []
@@ -326,12 +321,12 @@ def make_gui(window):
     entry_y2 = Entry(frame4)
 
     # all of the buttons and calling their respective function calls
-    button0 = Button(frame3, text="Proceed with crop", bg="Green", command=Confirm_button_ex)
+    #button0 = Button(frame3, text="Proceed with crop", bg="Green", command=Confirm_button_ex)
     button1 = Button(frame3, text="Proceed without crop", fg="Black", command=Confirm_nocrop_button_ex)
     button2 = Button(frame3, text="Exit", bg="Red", command=frame3.quit)
     button3 = Button(frame2, text="Select file...", bg="gray", command=getfile)
     button4 = Button(frame2, text="Choose Save Location...", bg="gray", command=choosesave)
-    button5 = Button(frame2, text="Crop Image", bg="gray", command=newimwindow)
+    #button5 = Button(frame2, text="Crop Image", bg="gray", command=newimwindow)
 
     # setting the location of all elements in the gui
     label1.grid(row=0, column=1)
@@ -349,12 +344,12 @@ def make_gui(window):
     fileentry.grid(row=1, column=1)
     savedir.grid(row=2, column=1)
 
-    button0.grid(row=0, column=0)
+    #button0.grid(row=0, column=0)
     button1.grid(row=0, column=1)
     button2.grid(row=0, column=2)
     button3.grid(row=0, column=0)
     button4.grid(row=0, column=1)
-    button5.grid(row=0, column=2)
+    #button5.grid(row=0, column=2)
 
     # keep the window alive
     root.mainloop()

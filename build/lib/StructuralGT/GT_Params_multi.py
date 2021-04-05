@@ -1,7 +1,7 @@
 """GT_Params_multi: Calculates and collates graph theory indices from
 an input graph. Utilizes the NetworkX and GraphRicciCurvature
 libraries of algorithms.  Operates with the multi-image analysis
-feature of StructuralGT.
+feature of StructuralGT_RC.
 
 Copyright (C) 2021, The Regents of the University of Michigan.
 
