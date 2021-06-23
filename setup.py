@@ -39,7 +39,7 @@ Contact email: vecdrew@umich.edu
 
 setup(
     name='StructuralGT',
-    version='1.0.1a2',
+    version='1.0.1a3',
     packages=find_packages(),
     url='https://github.com/drewvecchio/StructuralGT',
     license='GNU General Public License v3',
