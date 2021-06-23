@@ -78,8 +78,11 @@ def lengthtoedge(m,orth,img_bin):
     i = 0                           # initializing iterative variable
     while(check==0):                # iteratively check along orthogonal vector to see if the coordinate is either...
         ptcheck = m + i*orth        # ... out of bounds, or no longer within the fiber in img_bin
-        ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
-        oob, ptcheck = boundarycheck(ptcheck, w, h)
+        try:
+            ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
+            oob, ptcheck = boundarycheck(ptcheck, w, h)
+        except:
+            oob = 1
         if(img_bin[int(ptcheck[0])][int(ptcheck[1])] == 0 or oob == 1):
             edge = m + (i-1)*orth
             edge[0], edge[1] = int(edge[0]), int(edge[1])
