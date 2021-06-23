@@ -295,45 +295,45 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         except:
             None
 
-            if(multigraph == 0):
-                if(Do_BCdist or Do_CCdist or Do_ECdist):
-                    f4 = plt.figure(figsize=(8.5, 11), dpi=400)
-                    if Do_BCdist:
-                        f4.add_subplot(2, 2, 1)
-                        bins2 = np.linspace(min(BCdist), max(BCdist), 50)
-                        try:
-                            BC_sig = str(round(stdev(BCdist), 3))
-                        except:
-                            BC_sig = "N/A"
-                        BC_txt = "Betweenness Centrality: $\sigma$=" + BC_sig
-                        plt.hist(BCdist, bins=bins2)
-                        plt.title(BC_txt)
-                        plt.xlabel("Betweenness value")
-                        plt.ylabel("Counts")
-                    if Do_CCdist:
-                        f4.add_subplot(2, 2, 2)
-                        bins3 = np.linspace(min(CCdist), max(CCdist), 50)
-                        try:
-                            CC_sig = str(round(stdev(CCdist), 3))
-                        except:
-                            CC_sig = "N/A"
-                        CC_txt = "Closeness Centrality: $\sigma$=" + CC_sig
-                        plt.hist(CCdist, bins=bins3)
-                        plt.title(CC_txt)
-                        plt.xlabel("Closeness value")
-                        plt.ylabel("Counts")
-                    if Do_ECdist:
-                        f4.add_subplot(2, 2, 3)
-                        bins4 = np.linspace(min(ECdist), max(ECdist), 50)
-                        try:
-                            EC_sig = str(round(stdev(ECdist), 3))
-                        except:
-                            EC_sig = "N/A"
-                        EC_txt = "Eigenvector Centrality: $\sigma$=" + EC_sig
-                        plt.hist(ECdist, bins=bins4)
-                        plt.title(EC_txt)
-                        plt.xlabel("Eigenvector value")
-                        plt.ylabel("Counts")
+        if(multigraph == 0):
+            if(Do_BCdist or Do_CCdist or Do_ECdist):
+                f4 = plt.figure(figsize=(8.5, 11), dpi=400)
+                if Do_BCdist:
+                    f4.add_subplot(2, 2, 1)
+                    bins2 = np.linspace(min(BCdist), max(BCdist), 50)
+                    try:
+                        BC_sig = str(round(stdev(BCdist), 3))
+                    except:
+                        BC_sig = "N/A"
+                    BC_txt = "Betweenness Centrality: $\sigma$=" + BC_sig
+                    plt.hist(BCdist, bins=bins2)
+                    plt.title(BC_txt)
+                    plt.xlabel("Betweenness value")
+                    plt.ylabel("Counts")
+                if Do_CCdist:
+                    f4.add_subplot(2, 2, 2)
+                    bins3 = np.linspace(min(CCdist), max(CCdist), 50)
+                    try:
+                        CC_sig = str(round(stdev(CCdist), 3))
+                    except:
+                        CC_sig = "N/A"
+                    CC_txt = "Closeness Centrality: $\sigma$=" + CC_sig
+                    plt.hist(CCdist, bins=bins3)
+                    plt.title(CC_txt)
+                    plt.xlabel("Closeness value")
+                    plt.ylabel("Counts")
+                if Do_ECdist:
+                    f4.add_subplot(2, 2, 3)
+                    bins4 = np.linspace(min(ECdist), max(ECdist), 50)
+                    try:
+                        EC_sig = str(round(stdev(ECdist), 3))
+                    except:
+                        EC_sig = "N/A"
+                    EC_txt = "Eigenvector Centrality: $\sigma$=" + EC_sig
+                    plt.hist(ECdist, bins=bins4)
+                    plt.title(EC_txt)
+                    plt.xlabel("Eigenvector value")
+                    plt.ylabel("Counts")
 
 
 
