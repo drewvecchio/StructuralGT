@@ -83,6 +83,7 @@ def lengthtoedge(m,orth,img_bin):
             oob, ptcheck = boundarycheck(ptcheck, w, h)
         except:
             oob = 1
+            ptcheck[0], ptcheck[1] = int(0), int(0)
         if(img_bin[int(ptcheck[0])][int(ptcheck[1])] == 0 or oob == 1):
             edge = m + (i-1)*orth
             edge[0], edge[1] = int(edge[0]), int(edge[1])
@@ -94,8 +95,12 @@ def lengthtoedge(m,orth,img_bin):
     i = 0
     while(check == 0):              # Repeat, but following the negative orthogonal vector
         ptcheck = m - i*orth
-        ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
-        oob, ptcheck = boundarycheck(ptcheck, w, h)
+        try:
+            ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
+            oob, ptcheck = boundarycheck(ptcheck, w, h)
+        except:
+            oob = 1
+            ptcheck[0], ptcheck[1] = int(0), int(0)
         if(img_bin[int(ptcheck[0])][int(ptcheck[1])] == 0 or oob == 1):
             edge = m - (i-1)*orth
             edge[0], edge[1] = int(edge[0]), int(edge[1])
