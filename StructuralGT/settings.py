@@ -309,7 +309,7 @@ def save_data(src, Thresh_method, gamma, md_filter, g_blur, autolvl, fg_color, a
         except:
             None
 
-        if(multigraph == 0):
+        if(multigraph == 0 and weighted == 0):
             if(Do_BCdist or Do_CCdist or Do_ECdist):
                 f4 = plt.figure(figsize=(8.5, 11), dpi=400)
                 if Do_BCdist:
