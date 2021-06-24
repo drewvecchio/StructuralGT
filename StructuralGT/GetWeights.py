@@ -45,6 +45,8 @@ def findorthogonal(u,v):
     # u, v: two coordinates (x, y) or (x, y, z)
 
     n = unitvector(u,v)         # make n a unit vector along u,v
+    if (np.isnan(n[0]) or np.isnan(n[1])):
+        n[0] , n[1] = float(0) , float(0)
     hl = halflength(u,v)        # find the half-length of the vector u,v
     orth = np.random.randn(2)   # take a random vector
     orth -= orth.dot(n) * n     # make it orthogonal to vector u,v
@@ -78,12 +80,8 @@ def lengthtoedge(m,orth,img_bin):
     i = 0                           # initializing iterative variable
     while(check==0):                # iteratively check along orthogonal vector to see if the coordinate is either...
         ptcheck = m + i*orth        # ... out of bounds, or no longer within the fiber in img_bin
-        try:
-            ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
-            oob, ptcheck = boundarycheck(ptcheck, w, h)
-        except:
-            oob = 1
-            ptcheck[0], ptcheck[1] = int(0), int(0)
+        ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
+        oob, ptcheck = boundarycheck(ptcheck, w, h)
         if(img_bin[int(ptcheck[0])][int(ptcheck[1])] == 0 or oob == 1):
             edge = m + (i-1)*orth
             edge[0], edge[1] = int(edge[0]), int(edge[1])
@@ -95,12 +93,8 @@ def lengthtoedge(m,orth,img_bin):
     i = 0
     while(check == 0):              # Repeat, but following the negative orthogonal vector
         ptcheck = m - i*orth
-        try:
-            ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
-            oob, ptcheck = boundarycheck(ptcheck, w, h)
-        except:
-            oob = 1
-            ptcheck[0], ptcheck[1] = int(0), int(0)
+        ptcheck[0], ptcheck[1] = int(ptcheck[0]), int(ptcheck[1])
+        oob, ptcheck = boundarycheck(ptcheck, w, h)
         if(img_bin[int(ptcheck[0])][int(ptcheck[1])] == 0 or oob == 1):
             edge = m - (i-1)*orth
             edge[0], edge[1] = int(edge[0]), int(edge[1])
