@@ -307,7 +307,7 @@ be changed using the 'Choose save location...' button.  If an image needs to be 
 For the example images, cropping will not be needed.  Once the file path is properly selected, click 'Proceed without 
 crop' to move onto the GUI containing the SGT processing settings.
 
-Test_STEM.tif\
+Test_STEM.png\
 This is a dark-field STEM image of a network of self-assembled nanoparticles.  The 2D nature of the network and high 
 contrast between the sample and background makes it a convenient image to analyze.\
 In 'Image Detection Settings':\
@@ -327,7 +327,7 @@ Press the 'Select All...' button, then click 'Proceed'.\
 The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.\
 Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
 
-Test_SEM.png\
+Test_SEM.tif\
 This is an SEM image of a network of nanofibers.  This is a 3D network with a lesser distinction between fibers in the 
 foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.\
 In 'Image Detection Settings':\
