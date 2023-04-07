@@ -18,8 +18,6 @@ Contributers: Drew Vecchio, Samuel Mahler, Mark D. Hammig, Nicholas A. Kotov
 Contact email: vecdrew@umich.edu
 URL: https://github.com/drewvecchio/StructuralGT
 
-![](Images/SGT_BC_ex.png?raw=true)
-
 ### Structural Graph Theory Calculator
 
 StructuralGT is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
@@ -32,22 +30,19 @@ accessible to anyone, regardless of programming experience.  Detection of networ
 the graph object, and the subsequent GT analysis of the graph is handled entirely from the GUI, and a PDF file with the
 results of the analysis is saved.
 
-### Getting Started
+### Installation / Getting Started
 
-StructuralGT is available as a downloadable python package from:
+StructuralGT is available as a downloadable python package or Windows executable from:
 https://github.com/drewvecchio/StructuralGT
 
 Or it can be pip installed from pypi.org using pip commands:
-pip install StructuralGT OR pip3 install StructuralGT
-
-A stand-alone Windows executable file is located here for download:
-https://drive.google.com/drive/folders/1p0NJEryrGDoZ7yvAXB5rfp08K5Muxeaa?usp=sharing
+pip install StructuralGT.  This process should only take moments.
 
 The windows executable can be run by double-clicking the icon on supported Windows operating systems (this may take
 up to a minute to load, so do not be alarmed).
 
 Otherwise,
-In the command line, navigate to the package location, and open the StructuralGT GUI by running 'python3 StructuralGT'
+In the command line, open the StructuralGT GUI by running 'python StructuralGT'
 
 ### Selecting analysis mode
 
@@ -88,8 +83,6 @@ need to be appropriately cropped with an external program in advance.
 After selecting the image and clicking to proceed, the GUI will change to the StructuralGT Settings window.
 The GUI is segmented into four quadrants, for choosing the image detection settings, for previewing the binary image, 
 handling the generated graph object, and calculating the GT parameters using NetworkX algorithms.
-
-![](Images/GUI_ex.png?raw=true)
 
 ### Image Detection Settings
 
@@ -235,7 +228,6 @@ positive (A is the adjacency matrix of the graph).  A measure of centrality wher
 on the centrality of the nodes connected to it.
 Reported as: average value, histogram, heat-map, and width-weighted counterparts
 
-**Ricci Curvature measurement only supported in separate branch, StructuralGT_RC**
 *Graph Ricci Curvature: The Ollivier-Ricci curvature and Forman-Ricci curvature can be evaluated using the python
 package, GraphRicciCurvature.  The ricci curvature is a method of community segmentation through differential geometry
 measures. Ricci curvature values are assigned to edges, with positive ricci curvature indicating connection to that 
@@ -277,11 +269,11 @@ The bottom image displays the final graph that is used for calculation, with all
 This graph is overlaid onto the original source image, so that the visual match is apparent, and is color coded with 
 the nodes in blue and the edges in red.
 If the user selected to display node IDs, then a small number displaying the node ID will be present next to the 
-repective node in each image.
+respective node in each image.
 This is useful for correlating graph exported to Gephi to this image, as the node IDs should be consistent.
 
 If the user did not select to perform weighted edge analysis, then the third page of the PDF results file will contain 
-all of the parameter selected for calculation (in addition to total # of nodes and edges) in a table, 
+all the parameters selected for calculation (in addition to total # of nodes and edges) in a table, 
 and any histograms would be displayed here as well.
 
 If the user selected to perform weighted edge analysis, then the third page of the PDF results file will contain two 
@@ -298,3 +290,64 @@ The final page of the PDF file will always be a summary of the analysis of Struc
 run date and time, and the settings used for image detection and graph extraction.  These settings can be helpful if 
 an analysis needs to be repeated, so that the settings can be recalled.
 
+### Example SGT Analysis
+
+Included in the 'Example Images' Folder are test case images: an SEM image of an aramid fiber network, and a STEM image 
+of network of self-assembled nanoparticles.  Included in this folder are additionally the result files produced 
+according to the processing settings discussed below.  You may use these test images to verify proper operation of the 
+StructuralGT package and to familiarize yourself with the GUI.
+
+Open StructuralGT by any of the methods discussed in the 'Getting Started' portion of the Readme document.  After a 
+short time, a window should pop-up requesting that you select either single-image or batch-image StructuralGT analysis. 
+Click 'Single Image StructuralGT'.  This will bring up the main StructuralGT GUI.  From here, you can select the image 
+file to process by clicking 'Select file...' and navigating to the location of the file that you wish to analyze 
+(Example Images).  The result save directory will default to the same file path as the selected image file.  This can 
+be changed using the 'Choose save location...' button.  If an image needs to be cropped, this can be done with the 
+'Crop Image' button.  This is helpful for cropping an area that excludes the scale bar or other microscopy annotations. 
+For the example images, cropping will not be needed.  Once the file path is properly selected, click 'Proceed without 
+crop' to move onto the GUI containing the SGT processing settings.
+
+Test_STEM.tif
+This is a dark-field STEM image of a network of self-assembled nanoparticles.  The 2D nature of the network and high 
+contrast between the sample and background makes it a convenient image to analyze.
+In 'Image Detection Settings':
+Adjust the gamma to 0.75 to reduce the brightness of the background.
+Apply a low-pass filter to further reduce the background noise and gradients in the brightness of the background.
+Keep the filter window size at its default value of 10 for this example.
+Ensure that a global threshold is being used, and adjust the global threshold value to 14.
+In 'Graph Extraction Settings':
+Assign weights by diameter.
+Select to removed disconnected segments. It is highly recommended to always use this option.
+The default value of 500 for remove object size is sufficient.
+Keep the 'Disable multigraph' box checked as it should be by default.  This prevents parallel edges, at least one of 
+which is present in this graph.
+Select to display node IDs in the final graph.
+In 'NetworkX Calculation Settings':
+Press the 'Select All...' button, then click 'Proceed'
+The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.
+Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
+
+Test_SEM.tif
+This is an SEM image of a network of nanofibers.  This is a 3D network with a lesser distinction between fibers in the 
+foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.
+In 'Image Detection Settings':
+Adjust the gamma to 0.50 to reduce the brightness of the background.
+Apply median filter.
+Apply the gaussian filter.
+Keep the gaussian blur size at its default value of 3 for this example.
+This filters will smoothen the noise in the foreground of this image
+Select the adaptive threshold, which will better allow to distinguish foreground fibers from background fibers.
+Increase the size of the adaptive threshold kernel to 111 to compare across a wider area.
+In 'Graph Extraction Settings':
+Select 'Merge nearby nodes'.
+Select 'Prune dangling edges'.
+Select 'Remove self-loops'.
+Select to removed disconnected segments. It is highly recommended to always use this option.
+The default value of 500 for remove object size is sufficient.
+Uncheck the 'Disable multigraph' for this example to allow for parallel edges in the graph.
+In 'NetworkX Calculation Settings':
+Press the 'Select All...' button, then click 'Proceed'
+Due to the greater number of nodes, the calculation will take ~10 minutes to complete. as observed by the progress bar.
+Most of the computation time is due to calculating Average Nodal Connectivity, so you may optionally uncheck this box 
+to make sure the results can be obtained in a few seconds.
+Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
