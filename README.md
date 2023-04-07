@@ -307,47 +307,47 @@ be changed using the 'Choose save location...' button.  If an image needs to be 
 For the example images, cropping will not be needed.  Once the file path is properly selected, click 'Proceed without 
 crop' to move onto the GUI containing the SGT processing settings.
 
-Test_STEM.tif
+Test_STEM.tif\
 This is a dark-field STEM image of a network of self-assembled nanoparticles.  The 2D nature of the network and high 
-contrast between the sample and background makes it a convenient image to analyze.
-In 'Image Detection Settings':
-Adjust the gamma to 0.75 to reduce the brightness of the background.
-Apply a low-pass filter to further reduce the background noise and gradients in the brightness of the background.
-Keep the filter window size at its default value of 10 for this example.
-Ensure that a global threshold is being used, and adjust the global threshold value to 14.
-In 'Graph Extraction Settings':
-Assign weights by diameter.
-Select to removed disconnected segments. It is highly recommended to always use this option.
-The default value of 500 for remove object size is sufficient.
+contrast between the sample and background makes it a convenient image to analyze.\
+In 'Image Detection Settings':\
+Adjust the gamma to 0.75 to reduce the brightness of the background.\
+Apply a low-pass filter to further reduce the background noise and gradients in the brightness of the background.\
+Keep the filter window size at its default value of 10 for this example.\
+Ensure that a global threshold is being used, and adjust the global threshold value to 14.\
+In 'Graph Extraction Settings':\
+Assign weights by diameter.\
+Select to removed disconnected segments. It is highly recommended to always use this option.\
+The default value of 500 for remove object size is sufficient.\
 Keep the 'Disable multigraph' box checked as it should be by default.  This prevents parallel edges, at least one of 
-which is present in this graph.
-Select to display node IDs in the final graph.
-In 'NetworkX Calculation Settings':
-Press the 'Select All...' button, then click 'Proceed'
-The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.
+which is present in this graph.\
+Select to display node IDs in the final graph.\
+In 'NetworkX Calculation Settings':\
+Press the 'Select All...' button, then click 'Proceed'.\
+The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.\
 Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
 
-Test_SEM.tif
+Test_SEM.tif\
 This is an SEM image of a network of nanofibers.  This is a 3D network with a lesser distinction between fibers in the 
-foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.
-In 'Image Detection Settings':
-Adjust the gamma to 0.50 to reduce the brightness of the background.
-Apply median filter.
-Apply the gaussian filter.
-Keep the gaussian blur size at its default value of 3 for this example.
-This filters will smoothen the noise in the foreground of this image
-Select the adaptive threshold, which will better allow to distinguish foreground fibers from background fibers.
-Increase the size of the adaptive threshold kernel to 111 to compare across a wider area.
-In 'Graph Extraction Settings':
-Select 'Merge nearby nodes'.
-Select 'Prune dangling edges'.
-Select 'Remove self-loops'.
-Select to removed disconnected segments. It is highly recommended to always use this option.
-The default value of 500 for remove object size is sufficient.
-Uncheck the 'Disable multigraph' for this example to allow for parallel edges in the graph.
-In 'NetworkX Calculation Settings':
-Press the 'Select All...' button, then click 'Proceed'
-Due to the greater number of nodes, the calculation will take ~10 minutes to complete. as observed by the progress bar.
+foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.\
+In 'Image Detection Settings':\
+Adjust the gamma to 0.50 to reduce the brightness of the background.\
+Apply median filter.\
+Apply the gaussian filter.\
+Keep the gaussian blur size at its default value of 3 for this example.\
+This filters will smoothen the noise in the foreground of this image\
+Select the adaptive threshold, which will better allow to distinguish foreground fibers from background fibers.\
+Increase the size of the adaptive threshold kernel to 111 to compare across a wider area.\
+In 'Graph Extraction Settings':\
+Select 'Merge nearby nodes'.\
+Select 'Prune dangling edges'.\
+Select 'Remove self-loops'.\
+Select to removed disconnected segments. It is highly recommended to always use this option.\
+The default value of 500 for remove object size is sufficient.\
+Uncheck the 'Disable multigraph' for this example to allow for parallel edges in the graph.\
+In 'NetworkX Calculation Settings':\
+Press the 'Select All...' button, then click 'Proceed'\
+Due to the greater number of nodes, the calculation will take ~10 minutes to complete. as observed by the progress bar.\
 Most of the computation time is due to calculating Average Nodal Connectivity, so you may optionally uncheck this box 
-to make sure the results can be obtained in a few seconds.
+to make sure the results can be obtained in a few seconds.\
 Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
