@@ -327,7 +327,7 @@ Press the 'Select All...' button, then click 'Proceed'.\
 The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.\
 Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
 
-Test_SEM.tif\
+Test_SEM.png\
 This is an SEM image of a network of nanofibers.  This is a 3D network with a lesser distinction between fibers in the 
 foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.\
 In 'Image Detection Settings':\
