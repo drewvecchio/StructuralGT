@@ -20,6 +20,8 @@ URL: https://github.com/drewvecchio/StructuralGT
 
 ### Structural Graph Theory Calculator
 
+![](/Ref/SGT_BC_ex.png)
+
 StructuralGT is designed as an easy-to-use python-based application for applying graph theory (GT) analysis to 
 structural networks of a wide variety of material systems. This application converts digital images of 
 nano-/micro-/macro-scale structures into a graph theoretical (GT) representation of the structure in the image 
@@ -84,41 +86,44 @@ After selecting the image and clicking to proceed, the GUI will change to the St
 The GUI is segmented into four quadrants, for choosing the image detection settings, for previewing the binary image, 
 handling the generated graph object, and calculating the GT parameters using NetworkX algorithms.
 
+![](/Ref/GUI_ex.png)
+
 ### Image Detection Settings
 
 The primary feature of the image detection settings is three radio buttons for selecting the type of thresholding to 
 apply to the end image.
 
-Global threshold will isolate all pixels above and below the user-set threshold value, recommended for images with 
-high contrast (STEM).
-Adaptive threshold determines locally how to threshold pixels, as opposed to using the same threshold for the global 
-image.  Recommended for images with more noise or uneven brightness in the image (TEM).
-The OTSU Threshold uses Otsu's method of binarization to select a threshold that minimize variance between dark and 
+**Global threshold** will isolate all pixels above and below the user-set threshold value, recommended for images with 
+high contrast (STEM).\
+**Adaptive threshold** determines locally how to threshold pixels, as opposed to using the same threshold for the global 
+image.  Recommended for images where contrast between foreground and background is not distinct globally but can be 
+distinguished locally (SEM).\
+The **OTSU Threshold** uses Otsu's method of binarization to select a threshold that minimize variance between dark and 
 light pixels.  Like an automated version of the global threshold, recommended for images that need a consistent 
-threshold applied (SEM).
+threshold applied.
 
 The global threshold value can be applied by a slider, from values of 1-255.
 The adaptive threshold kernal size can be entered in the appropriate text box, as an odd integer from 3-511.
 
 Several filters and computer vision techniques are available to preprocess the image for more accurate image detection.
 
-The gamma of the image can be adjusted (from 0.01 to 5.00) by the slider at the top.  Adjusting gamma provides a 
+The **gamma** of the image can be adjusted (from 0.01 to 5.00) by the slider at the top.  Adjusting gamma provides a 
 nonlinear brightness adjustment.  Gamma values above 1 will make moderate pixel values brighter, while values below 1
 will have the opposite effect.
 
-A gaussian blur can be applied, and the size of the blurring element can be set by entering an odd integer into the 
+A **gaussian blur** can be applied, and the size of the blurring element can be set by entering an odd integer into the 
 corresponding text box.
 
-A median filter can be applied, using a 3x3 kernel to reduce salt-and-pepper noise in the image.
+A **median filter** can be applied, using a 3x3 kernel to reduce salt-and-pepper noise in the image.
 
-The low pass filter option applies a Hamming Window filter to the image, using the window size entered in the text box.
+The **low pass filter** option applies a Hamming Window filter to the image, using the window size entered in the text box.
 
-Sobel, Scharr, and Laplacian gradients can be applied if selected.
+**Sobel**, **Scharr**, and **Laplacian** gradients can be applied if selected.
 
-Autolevel uses the blurring element kernel size to normalize the pixel values within that neighborhood. Can be helpful
+**Autolevel** uses the blurring element kernel size to normalize the pixel values within that neighborhood. Can be helpful
 in edge detection.
 
-Clicking the "Foreground is dark" button inverts the image.
+Clicking the _Foreground is dark_ button inverts the image.
 
 There is a "Preview" button in the bottom-right of this section that will allow you to see a preview of the steps of 
 this process, so that the proper settings can be used and adjusted before proceeding with the full analysis.
@@ -149,25 +154,25 @@ settings in this section, as well as providing some additional options for handl
 
 Often in a graph with wide edges, an interesection that a human might identify to be a single node gets represented by 
 a cluster of several intersections by the skeleton.
-The option to "Merge nearby nodes" applies a small disk element over each node, then attempts to reduce the skeleton 
+The option to _Merge nearby nodes_ applies a small disk element over each node, then attempts to reduce the skeleton 
 again, with the intention of combining nodes that are within a few pixels of each other into the same single pixel 
 (this method is imperfect, and has a limit to only several pixels, so it cannot work for nodes that are not very 
 close to each other).
 
-The "Prune dangling edges" option looks to remove edges that do not connect to other nodes - this is useful especially 
+The _Prune dangling edges_ option looks to remove edges that do not connect to other nodes - this is useful especially 
 for excluding edges that extend past the edge of the image, which reduces the informational content of that edge.
 
 You can tell the software whether to include/exclude self-loops in the graph (a node with an edge connecting to itself),
-or to allow the graph the be a multigraph (more than one edge connecting the same pair of nodes).  Be aware, some
+or to allow the graph to be a multigraph (more than one edge connecting the same pair of nodes).  Be aware, some
 calculations cannot be performed on multigraphs.  By definition, all graphs of structural networks are undirected.
 
-Use "Remove disconnected segments" in order to delete parts of the graph that are not connected to the main network 
+Use _Remove disconnected segments_ in order to delete parts of the graph that are not connected to the main network 
 either through noise or consequence of filtering.  Subgraph objects with a size less than the entered value are deleted.
 It is highly recommended to remove all disconnected elements, so that only a singular connected subgraph remains.  
 Be aware that some calculations cannot be performed if there is not only a single connected graph.
 
 All graphs use an unweighted analysis (each edge treated equivalently with a value of 1), though a weighted analysis
-can also be performed.  By selecting to assign edge weights, the width and length of each edge are stored, which can
+can also be performed.  By selecting to _assign edge weights by diameter_, the width and length of each edge are stored, which can
 be used to treat the edges non-uniformly.  The length is measured by a trace along the edge, and the width is
 approximated by measuring the pixel width along the perpendicular bisector of the edge.
 
@@ -183,52 +188,52 @@ onto the figure in the PDF results, so that they can be visually connected.
 ### NetworkX Calculation Settings
 
 Each checkbox will tell the software to compute the associated parameter using the NetworkX algorithm.
-If the Graph Extraction Setting "Assign edge weights by diameters" was checked, then some of these calculations will 
+If the Graph Extraction Setting _Assign edge weights by diameters_ was checked, then some of these calculations will 
 additionally calculate the equivalent weighted parameter.
 Each calculation selected will be attempted on the final graph generated.
 These parameters are briefly described below; more detailed information about these calculations can be found from the 
 NetworkX documentation page.  https://networkx.org/documentation/stable/reference/algorithms/index.html
 
-Degree: A count of how many edges connect to each node
+**Degree**: A count of how many edges connect to each node
 Reported as: Average value, histogram, heat-map, and width-weighted counterparts
 
-Network diameter: The number of edges traversed that you would never need to exceed to travel between any two nodes 
+**Network diameter**: The number of edges traversed that you would never need to exceed to travel between any two nodes 
 in the graph; also understood as the longest shortest path.
 Reported as: value
 
-Graph density: a measure of how many edges exist out of all possible edges that could in a complete graph.
+**Graph density**: a measure of how many edges exist out of all possible edges that could in a complete graph.
 Reported as: value
 
-Global efficiency: The inverse of the distance to travel to each node.
+**Global efficiency**: The inverse of the distance to travel to each node.
 Reported as: value
 
-Wiener Index: The sum of all shortest path lengths in the graph
+**Wiener Index**: The sum of all shortest path lengths in the graph
 Reported as: value, and length-weighted counterpart
 
-Clustering coefficient: Of a node, the fraction of neighbors of the node, that are connected directly to each 
+**Clustering coefficient**: Of a node, the fraction of neighbors of the node, that are connected directly to each 
 other as well. Also understood as how many triangles form out of all possible tringles that could exist.
 Reported as: average value, heat-map
 
-Nodal connectivity: a measure of the minimum number of edges needed to be removed to disconnect a pair of nodes
+**Nodal connectivity**: a measure of the minimum number of edges needed to be removed to disconnect a pair of nodes
 Reported as: average value, maximum flow between periphery (width-weighted minimum cut)
 
-Assortativity coefficient: a measure of similarity of connections within the graph with respect to the degree - this 
+**Assortativity coefficient**: a measure of similarity of connections within the graph with respect to the degree - this 
 produces a value between -1 {not at all similar} and +1 {very similar}.  A value near zero represents randomly 
 distributed connections.
 Reported as: value, width-weighted counterpart
 
-Betweeness centrality: a measure of how often a particular node lies along the shortest path between two other nodes 
+**Betweeness centrality**: a measure of how often a particular node lies along the shortest path between two other nodes 
 Reported as: average value, histogram, heat-map, and width-weighted counterparts
 
-Closeness centrality: the sum of the inverse shortest distance of a certain node to all other nodes in the graph
+**Closeness centrality**: the sum of the inverse shortest distance of a certain node to all other nodes in the graph
 Reported as: average value, histogram, heat-map, and length-weighted counterparts
 
-Eigenvector centrality: the solution to the eigenvector equation, Ax = \lambda x, such that all elements of x are 
+**Eigenvector centrality**: the solution to the eigenvector equation, Ax = \lambda x, such that all elements of x are 
 positive (A is the adjacency matrix of the graph).  A measure of centrality where a node's centrality is dependent 
 on the centrality of the nodes connected to it.
 Reported as: average value, histogram, heat-map, and width-weighted counterparts
 
-*Graph Ricci Curvature: The Ollivier-Ricci curvature and Forman-Ricci curvature can be evaluated using the python
+*_Graph Ricci Curvature_: The Ollivier-Ricci curvature and Forman-Ricci curvature can be evaluated using the python
 package, GraphRicciCurvature.  The ricci curvature is a method of community segmentation through differential geometry
 measures. Ricci curvature values are assigned to edges, with positive ricci curvature indicating connection to that 
 node, and the community that node is a part of, and negative curvature indicating the nodes not being part of the same 
@@ -243,7 +248,7 @@ https://github.com/networkit/networkit#installation-instructions
 Reported as: average value, heat-map, and length-weighted counterparts
 
 
-Exceptions:
+_Exceptions_:
 1) If more than one subgraph exists, network diameter and average nodal connectivity cannot be calculated, and NaN will 
    be reported in the results
 2) If the graph is formatted as a multigraph, average nodal connectivity, betweenness centrality, and eigenvector 
@@ -259,6 +264,8 @@ as the original file, followed by "_SGT_results.pdf".  It will be saved to the l
 The first page contains the same information that would appear when using "Preview" in the Image Detection settings.
 This contains the original image, processed image (post image filtering), a histogram of pixel values of the processed 
 image, and the binary image acquired after applying a thresholding method.
+
+![](/Ref/SEM_graph_ex.png)
 
 The second page contains the graph that was obtained from the binary image.
 The top image shows the initial skeleton that was formed, with color coding to indentify what each pixel signified: 
@@ -307,7 +314,7 @@ be changed using the 'Choose save location...' button.  If an image needs to be 
 For the example images, cropping will not be needed.  Once the file path is properly selected, click 'Proceed without 
 crop' to move onto the GUI containing the SGT processing settings.
 
-Test_STEM.png\
+**Test_STEM.png**\
 This is a dark-field STEM image of a network of self-assembled nanoparticles.  The 2D nature of the network and high 
 contrast between the sample and background makes it a convenient image to analyze.\
 In 'Image Detection Settings':\
@@ -327,7 +334,7 @@ Press the 'Select All...' button, then click 'Proceed'.\
 The calculation should only take a few seconds (~15 sec) to complete, as observed by the progress bar.\
 Compare the result file generated with the suffix _SGT_results.pdf to the _example_results.pdf file.
 
-Test_SEM.tif\
+**Test_SEM.tif**\
 This is an SEM image of a network of nanofibers.  This is a 3D network with a lesser distinction between fibers in the 
 foreground and the background.  The goal is to generate a graph of the 2D-projection of the top slice of the network.\
 In 'Image Detection Settings':\
