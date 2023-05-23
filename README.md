@@ -34,12 +34,14 @@ results of the analysis is saved.
 
 ### Installation / Getting Started
 
-StructuralGT is available as a downloadable python package or Windows executable from:
+StructuralGT is available as a downloadable python package from:
 https://github.com/drewvecchio/StructuralGT
 
 Or it can be pip installed from pypi.org using pip commands:
 pip install StructuralGT.  This process should only take moments.
 
+A standalone windows executable can be downloaded from:
+https://drive.google.com/drive/folders/1p0NJEryrGDoZ7yvAXB5rfp08K5Muxeaa?usp=sharing
 The windows executable can be run by double-clicking the icon on supported Windows operating systems (this may take
 up to a minute to load, so do not be alarmed).
 
