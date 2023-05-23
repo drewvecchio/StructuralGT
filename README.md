@@ -41,7 +41,7 @@ Or it can be pip installed from pypi.org using pip commands:
 pip install StructuralGT.  This process should only take moments.
 
 A standalone windows executable can be downloaded from:
-https://drive.google.com/drive/folders/1p0NJEryrGDoZ7yvAXB5rfp08K5Muxeaa?usp=sharing
+https://drive.google.com/drive/folders/1p0NJEryrGDoZ7yvAXB5rfp08K5Muxeaa?usp=sharing \
 The windows executable can be run by double-clicking the icon on supported Windows operating systems (this may take
 up to a minute to load, so do not be alarmed).
 
